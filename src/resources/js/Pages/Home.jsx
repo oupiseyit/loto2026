@@ -133,18 +133,18 @@ function InputControls({ betType, setBetType, letters, letter, setLetter, positi
             </div>
 
             {compact ? (
-                <div className="flex gap-2">
+                <>
                     <input type="text" readOnly value={number}
                         onFocus={() => setActiveInput('number')} onClick={() => setActiveInput('number')}
                         placeholder="Number"
-                        className="flex-1 text-center py-2 text-base font-bold rounded border-2 outline-none cursor-pointer"
+                        className="w-full text-center py-2 text-base font-bold rounded border-2 outline-none cursor-pointer"
                         style={{ borderColor: activeInput === 'number' ? colors.accent : colors.primary, color: colors.accent }} />
                     <input type="text" readOnly value={amount}
                         onFocus={() => setActiveInput('amount')} onClick={() => setActiveInput('amount')}
                         placeholder="Amount"
-                        className="flex-1 text-center py-2 text-base font-bold rounded border-2 outline-none cursor-pointer"
+                        className="w-full text-center py-2 text-base font-bold rounded border-2 outline-none cursor-pointer"
                         style={{ borderColor: activeInput === 'amount' ? colors.accent : colors.primary, color: colors.primary }} />
-                </div>
+                </>
             ) : (
                 <>
                     <input type="text" readOnly value={number}
@@ -162,10 +162,10 @@ function InputControls({ betType, setBetType, letters, letter, setLetter, positi
 
             <div className="flex gap-2">
                 <button type="button" onClick={handleClear}
-                    className="flex-1 py-2 rounded-lg font-bold text-sm border-2"
+                    className="w-full py-2 rounded-lg font-bold text-sm border-2"
                     style={{ borderColor: colors.primary, color: colors.primary, backgroundColor: '#fff' }}>CLEAR</button>
                 <button type="button" onClick={handleAdd}
-                    className="flex-1 py-2 rounded-lg font-bold text-sm text-white"
+                    className="w-full py-2 rounded-lg font-bold text-sm text-white"
                     style={{ backgroundColor: colors.primary }}>ADD</button>
             </div>
 
@@ -191,7 +191,7 @@ export default function Home({ today }) {
     const [number, setNumber]       = useState('');
     const [amount, setAmount]       = useState('');
     const [activeInput, setActiveInput] = useState('number');
-    const [showBetList, setShowBetList] = useState(false);
+    const [showBetList, setShowBetList] = useState(true);
 
     const [bets, setBets]           = useState([]);
     const [submitting, setSubmitting] = useState(false);
@@ -312,11 +312,7 @@ export default function Home({ today }) {
                 </div>
 
                 {/* ═══ Mobile: Stacked layout ═══════════════════ */}
-                <div className="flex md:hidden flex-col flex-1 overflow-auto pb-[245px]">
-                    <div className="flex flex-col p-3 gap-2 bg-white">
-                        <InputControls {...controlProps} compact={true} hideNumpad={true} />
-                    </div>
-
+                <div className="flex md:hidden flex-col flex-1 overflow-auto pb-2">
                     <div className="border-t" style={{ borderColor: colors.primary }}>
                         <button type="button" onClick={() => setShowBetList(!showBetList)}
                             className="w-full flex items-center justify-between px-3 py-2 bg-white"
@@ -357,6 +353,7 @@ export default function Home({ today }) {
                             </div>
                         )}
 
+
                         <div className="p-2 bg-white">
                             <button type="button" onClick={handleSubmit}
                                 disabled={bets.length === 0 || submitting}
@@ -364,6 +361,12 @@ export default function Home({ today }) {
                                 style={{ backgroundColor: colors.accent }}>
                                 {submitting ? 'Submitting...' : 'បញ្ជូន (Submit)'}
                             </button>
+                        </div>
+                    </div>
+
+                    <div className="fixed bottom-[57px] left-0 right-0 border-t border-gray-200">
+                       <div className="flex flex-col p-3 pb-[200px] gap-2 bg-white">
+                            <InputControls {...controlProps} compact={true} hideNumpad={true} />
                         </div>
                     </div>
 
