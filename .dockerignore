@@ -1,0 +1,13 @@
+.git
+.gitignore
+docker
+docker-compose*.yml
+README.md
+CLAUDE.md
+Sample
+*.txt
+src/node_modules
+src/vendor
+src/public/build
+src/storage/logs
+src/.env

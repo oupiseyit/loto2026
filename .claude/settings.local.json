@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(gh pr:*)",
+      "Bash(grep -n \"pagination\\\\|paginate\\\\|CLAUDE.md\\\\|seeder\\\\|\\\\.env\\\\.example\\\\|queue\\\\|job\\\\|notification\" /Users/pisey/Desktop/Lotto2026/.claude/commands/*.md -i)",
+      "Bash(php --version)",
+      "Bash(composer --version)",
+      "Bash(docker --version)",
+      "Bash(docker run:*)",
+      "Bash(open -a Docker)",
+      "Bash(docker info:*)",
+      "Bash(npm install:*)",
+      "Bash(npm run:*)"
+    ],
+    "additionalDirectories": [
+      "/Users/pisey/Desktop/Lotto2026/.claude"
+    ]
+  }
+}

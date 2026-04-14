@@ -1,0 +1,15 @@
+project-root/
+├── docker/
+│   ├── nginx/
+│   │   └── default.conf
+│   └── php/
+│       ├── Dockerfile
+│       └── local.ini
+├── src/ (Laravel App)
+│   ├── app/
+│   ├── bootstrap/
+│   ├── ...
+│   └── public/
+├── .dockerignore
+├── .env
+└── docker-compose.yml

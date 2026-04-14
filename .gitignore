@@ -1,5 +1,6 @@
 /vendor/
 node_modules/
+src/vendor/
 npm-debug.log
 yarn-error.log
 
@@ -23,6 +24,7 @@ Homestead.json
 .phpunit.result.cache
 
 /public/build
+src/public/build/assets/
 /storage/pail
 .env.backup
 .env.production
