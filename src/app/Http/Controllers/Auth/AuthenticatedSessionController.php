@@ -7,18 +7,12 @@ use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
-use Inertia\Response;
 
 class AuthenticatedSessionController extends Controller
 {
-    /**
-     * Display the login view.
-     */
-    public function create(): Response
+    public function create()
     {
-        return Inertia::render('Login', [
+        return view('auth.login', [
             'status' => session('status'),
         ]);
     }
@@ -32,6 +26,8 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        auth()->user()->update(['session_id' => $request->session()->getId()]);
+
         return redirect()->intended(route('home', absolute: false));
     }
 
@@ -40,6 +36,8 @@ class AuthenticatedSessionController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
+        auth()->user()?->update(['session_id' => null]);
+
         Auth::guard('web')->logout();
 
         $request->session()->invalidate();

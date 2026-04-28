@@ -13,7 +13,7 @@ const puppeteer = require('puppeteer');
 const path      = require('path');
 const fs        = require('fs');
 
-const BASE_URL = 'http://localhost:8080';
+const BASE_URL = 'http://localhost:4040';
 const VIEWPORT = { width: 1440, height: 900 };
 
 // ── Accounts per role ──────────────────────────────────────────

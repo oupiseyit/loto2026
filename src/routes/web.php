@@ -7,7 +7,6 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\AccountController;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
 // Redirect root to login or home
 Route::get('/', fn () => redirect()->route('login'));
@@ -16,6 +15,9 @@ Route::get('/', fn () => redirect()->route('login'));
 Route::post('/locale', function (\Illuminate\Http\Request $request) {
     $request->validate(['locale' => 'required|in:en,km,vi,th']);
     session(['locale' => $request->locale]);
+    if (auth()->check()) {
+        auth()->user()->update(['locale' => $request->locale]);
+    }
     return back();
 })->name('locale.set');
 

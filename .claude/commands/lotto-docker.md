@@ -7,10 +7,10 @@ The project runs fully in Docker. No local PHP, MySQL, or Node installation need
 | Service | Image | Port | Purpose |
 |---|---|---|---|
 | `app` | Custom PHP 8.3-FPM | — | Laravel application |
-| `webserver` | `nginx:alpine` | `8080:80` | Nginx reverse proxy |
+| `webserver` | `nginx:alpine` | `4040:80` | Nginx reverse proxy |
 | `db` | `mysql:8.0` | `3306:3306` | MySQL database |
 | `node` | `node:20-alpine` | `5173:5173` | Vite HMR (dev only) |
-| `phpmyadmin` | `phpmyadmin:latest` | `8081:80` | DB GUI — dev only |
+| `phpmyadmin` | `phpmyadmin:latest` | `4041:80` | DB GUI — dev only |
 
 ## File Structure
 ```
@@ -47,7 +47,7 @@ services:
     container_name: lotto_nginx
     restart: unless-stopped
     ports:
-      - "8080:80"
+      - "4040:80"
     volumes:
       - .:/var/www
       - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
@@ -89,7 +89,7 @@ services:
     container_name: lotto_phpmyadmin
     restart: unless-stopped
     ports:
-      - "8081:80"
+      - "4041:80"
     environment:
       PMA_HOST: db
       PMA_PORT: 3306
@@ -159,7 +159,7 @@ DB_USERNAME=lotto_user
 DB_PASSWORD=CHANGE_ME          # use a strong password — never commit this
 DB_ROOT_PASSWORD=CHANGE_ME_ROOT
 
-SANCTUM_STATEFUL_DOMAINS=localhost:8080
+SANCTUM_STATEFUL_DOMAINS=localhost:4040
 SESSION_DOMAIN=localhost
 
 VITE_DEV_SERVER_HOST=0.0.0.0
@@ -188,14 +188,14 @@ docker compose down -v                                      # Stop + remove volu
 
 ## phpMyAdmin
 
-**URL (dev):** `http://localhost:8081`
+**URL (dev):** `http://localhost:4041`
 
 Auto-logs in using `DB_USERNAME` / `DB_PASSWORD` from `.env` via `PMA_USER` / `PMA_PASSWORD`.
 
 ### Access
 | Field | Value |
 |---|---|
-| URL | `http://localhost:8081` |
+| URL | `http://localhost:4041` |
 | Server | `db` (auto-configured via `PMA_HOST`) |
 | Username | value of `DB_USERNAME` in `.env` |
 | Password | value of `DB_PASSWORD` in `.env` |

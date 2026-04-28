@@ -1,14 +1,11 @@
 <?php
 
-// Screen: report | Theme: gold/crimson | Stack: Laravel+Inertia+React+API+Docker+MySQL
-
 namespace App\Http\Controllers;
 
 use App\Models\Ticket;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Inertia\Inertia;
 
 class ReportController extends Controller
 {
@@ -74,7 +71,9 @@ class ReportController extends Controller
             ->paginate(20)
             ->withQueryString();
 
-        return Inertia::render('Report', [
+        $view = auth()->user()->isAdmin() ? 'admin.report' : 'report';
+
+        return view($view, [
             'staff_list' => $staffList,
             'rows'       => $rows,
             'totals'     => $totals,

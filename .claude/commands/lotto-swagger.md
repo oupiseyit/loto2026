@@ -107,7 +107,7 @@ docker compose exec app php artisan l5-swagger:generate
 
 ### 5. View Swagger UI
 ```
-http://localhost:8080/api/documentation
+http://localhost:4040/api/documentation
 ```
 
 ### 6. Add to `.gitignore`
@@ -514,7 +514,7 @@ When generating Swagger annotations for a screen:
    ```bash
    docker compose exec app php artisan l5-swagger:generate
    ```
-   Then open `http://localhost:8080/api/documentation` to verify UI loads.
+   Then open `http://localhost:4040/api/documentation` to verify UI loads.
 
 ---
 

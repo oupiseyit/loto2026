@@ -13,6 +13,11 @@ class Ticket extends Model
         'invoice_number', 'status', 'win_amount',
     ];
 
+    public function scopeSubmitted($query)
+    {
+        return $query->whereIn('status', ['pending', 'won', 'lost']);
+    }
+
     protected $casts = ['bet_date' => 'date'];
 
     public function user()

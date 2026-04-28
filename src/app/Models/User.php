@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -23,6 +24,9 @@ class User extends Authenticatable
         'role',
         'created_by',
         'is_active',
+        'locale',
+        'currency_id',
+        'session_id',
     ];
 
     protected $hidden = [
@@ -58,6 +62,11 @@ class User extends Authenticatable
     public function setting(): HasOne
     {
         return $this->hasOne(Setting::class);
+    }
+
+    public function currency(): BelongsTo
+    {
+        return $this->belongsTo(Currency::class);
     }
 
     // Role helpers

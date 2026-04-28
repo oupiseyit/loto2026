@@ -10,10 +10,25 @@
       "Bash(open -a Docker)",
       "Bash(docker info:*)",
       "Bash(npm install:*)",
-      "Bash(npm run:*)"
+      "Bash(npm run:*)",
+      "Bash(git -C /Users/pisey/Desktop/Lotto2026/src diff vite.config.js)",
+      "Bash(git -C /Users/pisey/Desktop/Lotto2026/src diff package.json)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:4040/home)",
+      "Bash(npx playwright *)",
+      "Bash(node scripts/screenshot.mjs)",
+      "Bash(awk '{print $5, $9}')",
+      "Bash(php artisan *)",
+      "mcp__claude_ai_Figma__get_metadata",
+      "Bash(node /Users/pisey/Desktop/Lotto2026/screenShort/capture.js)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" \"http://localhost:4040/livewire/livewire.min.js\")",
+      "Bash(python3 -c \"import json,sys; cmds=json.load\\(sys.stdin\\)['commands']; [print\\(c['name']+'|'+c['description']\\) for c in cmds if not c['name'].startswith\\('_'\\)]\")",
+      "Bash(python3 -c \"import json,sys; p=json.load\\(sys.stdin\\); [print\\(k+': '+v\\) for k,v in p.get\\('scripts',{}\\).items\\(\\)]\")",
+      "Bash(sshpass -p '@Gmail.com12345' ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 kaka@1217.216.111.191 \"echo 'Login OK' && whoami && hostname\")",
+      "Bash(sshpass -p '@Gmail.com12345' ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 kaka@217.216.111.191 \"echo 'Login OK' && whoami && hostname && uname -a\")"
     ],
     "additionalDirectories": [
-      "/Users/pisey/Desktop/Lotto2026/.claude"
+      "/Users/pisey/Desktop/Lotto2026/.claude",
+      "/Users/pisey/Desktop/Lotto2026/screenShort"
     ]
   }
 }

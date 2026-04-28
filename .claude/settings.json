@@ -1,17 +1,17 @@
 {
   "permissions": {
     "allow": [
-      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:8080/login)",
-      "Bash(curl -s -X POST http://localhost:8080/api/v1/login -H 'Content-Type: application/json' -H 'Accept: application/json' -d '{\"username\":\"admin\",\"password\":\"admin123\"}')",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:4040/login)",
+      "Bash(curl -s -X POST http://localhost:4040/api/v1/login -H 'Content-Type: application/json' -H 'Accept: application/json' -d '{\"username\":\"admin\",\"password\":\"admin123\"}')",
       "Bash(python3 -m json.tool)",
-      "Bash(curl -s -o /dev/null -w \"GET /login: %{http_code}\\\\n\" http://localhost:8080/login)",
-      "Bash(curl -s -o /dev/null -w \"GET /home \\(unauth\\): %{http_code}\\\\n\" http://localhost:8080/home)",
-      "Bash(curl -s -o /dev/null -w \"GET /report \\(unauth\\): %{http_code}\\\\n\" http://localhost:8080/report)",
-      "Bash(curl -s -o /dev/null -w \"%{http_code}\" -X POST http://localhost:8080/logout)",
+      "Bash(curl -s -o /dev/null -w \"GET /login: %{http_code}\\\\n\" http://localhost:4040/login)",
+      "Bash(curl -s -o /dev/null -w \"GET /home \\(unauth\\): %{http_code}\\\\n\" http://localhost:4040/home)",
+      "Bash(curl -s -o /dev/null -w \"GET /report \\(unauth\\): %{http_code}\\\\n\" http://localhost:4040/report)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" -X POST http://localhost:4040/logout)",
       "Bash(node -e \"require\\('puppeteer'\\)\")",
       "Bash(node screenShort/capture.js)",
-      "Bash(curl -s http://localhost:8080/login)",
-      "Bash(curl -s -c /tmp/lotto_cookies.txt -b /tmp/lotto_cookies.txt http://localhost:8080/login -o /dev/null -w \"%{http_code}\")",
+      "Bash(curl -s http://localhost:4040/login)",
+      "Bash(curl -s -c /tmp/lotto_cookies.txt -b /tmp/lotto_cookies.txt http://localhost:4040/login -o /dev/null -w \"%{http_code}\")",
       "Read(//private/tmp/**)",
       "Bash(head -371 /Users/pisey/Desktop/Lotto2026/src/resources/js/Pages/Home.jsx)",
       "Read(//tmp/**)"

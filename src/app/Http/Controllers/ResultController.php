@@ -1,7 +1,5 @@
 <?php
 
-// Screen: result | Theme: gold/crimson | Stack: Laravel+Inertia+React+API+Docker+MySQL
-
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ResultRequest;
@@ -9,7 +7,6 @@ use App\Models\Result;
 use App\Models\Ticket;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Inertia\Inertia;
 
 class ResultController extends Controller
 {
@@ -24,6 +21,7 @@ class ResultController extends Controller
     {
         $selectedDate    = $request->date    ?? today()->toDateString();
         $selectedSession = $request->session ?? 'morning';
+        $canEdit         = auth()->user()->isAdmin();
 
         // Available dates (from tickets or results, last 60 days)
         $dates = DB::table('results')
@@ -52,9 +50,12 @@ class ResultController extends Controller
             'id'       => $results->get($pos)?->id,
         ]);
 
-        return Inertia::render('Result', [
-            'dates'           => $dates,
-            'grid'            => $grid,
+        $view = $canEdit ? 'admin.result' : 'result';
+
+        return view($view, [
+            'dates'   => $dates,
+            'grid'    => $grid,
+            'canEdit' => $canEdit,
             'filters' => [
                 'date'    => $selectedDate,
                 'session' => $selectedSession,

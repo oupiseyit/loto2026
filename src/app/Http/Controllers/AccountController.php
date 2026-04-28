@@ -1,57 +1,17 @@
 <?php
 
-// Screen: account | Theme: gold/crimson | Stack: Laravel+Inertia+React+API+Docker+MySQL
-
 namespace App\Http\Controllers;
 
-use App\Models\Ticket;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Inertia\Inertia;
 
 class AccountController extends Controller
 {
     public function index()
     {
-        $user = auth()->user();
-
-        // Today's sales (scoped by role)
-        $salesQuery = Ticket::whereDate('bet_date', today());
-        if ($user->role === 'staff') {
-            $salesQuery->where('user_id', $user->id);
-        } elseif ($user->role === 'master') {
-            $salesQuery->whereHas('user', fn ($q) => $q->where('created_by', $user->id));
-        }
-
-        $todaySales = $salesQuery->sum('total_amount');
-
-        // Sales breakdown by session for today
-        $breakdown = (clone $salesQuery)
-            ->selectRaw('session, COUNT(*) as count, SUM(total_amount) as amount')
-            ->groupBy('session')
-            ->get()
-            ->keyBy('session');
-
-        // Staff list for admin / master
-        $staff = null;
-        if ($user->role === 'admin' || $user->role === 'master') {
-            $staffQuery = User::where('role', 'staff');
-            if ($user->role === 'master') {
-                $staffQuery->where('created_by', $user->id);
-            }
-
-            $staff = $staffQuery->withSum(
-                ['tickets as today_amount' => fn ($q) => $q->whereDate('bet_date', today())],
-                'total_amount'
-            )->latest()->get();
-        }
-
-        return Inertia::render('Account', [
-            'today_sales' => (float) $todaySales,
-            'breakdown'   => $breakdown,
-            'staff'       => $staff,
-        ]);
+        $view = auth()->user()->isAdmin() ? 'admin.account' : 'account';
+        return view($view);
     }
 
     public function changePassword(Request $request)

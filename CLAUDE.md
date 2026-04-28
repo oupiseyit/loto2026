@@ -76,8 +76,8 @@ docker compose logs -f app                        # App logs
 docker compose down                               # Stop services
 ```
 
-phpMyAdmin: `http://localhost:8081`  
-App: `http://localhost:8080`  
+phpMyAdmin: `http://localhost:4041`  
+App: `http://localhost:4040`  
 Vite HMR: `http://localhost:5173`
 
 ---
@@ -138,8 +138,8 @@ project-root/
 ## Dev Tools (local only)
 
 - **Laravel Debugbar**: enabled via `DEBUGBAR_ENABLED=true` in `.env` (dev only)
-- **phpMyAdmin**: `http://localhost:8081` (never in production)
-- **Swagger UI**: `http://localhost:8080/api/documentation`
+- **phpMyAdmin**: `http://localhost:4041` (never in production)
+- **Swagger UI**: `http://localhost:4040/api/documentation`
 
 ---
 

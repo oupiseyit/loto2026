@@ -1,3 +1,90 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ── Theme tokens ─────────────────────────────────────────── */
+:root {
+    --ht-bg:          #f5f5f5;
+    --ht-card:        #ffffff;
+    --ht-surface:     #FFF8DC;
+    --ht-surface-alt: #ffffff;
+    --ht-text:        #374151;
+    --ht-text-muted:  #6b7280;
+    --ht-border:      #e5e7eb;
+    --ht-input-bg:    #ffffff;
+}
+
+[data-theme="dark"] {
+    --ht-bg:          #0f172a;
+    --ht-card:        #1e293b;
+    --ht-surface:     #1a2744;
+    --ht-surface-alt: #1e293b;
+    --ht-text:        #e2e8f0;
+    --ht-text-muted:  #94a3b8;
+    --ht-border:      #334155;
+    --ht-input-bg:    #0f172a;
+}
+
+/* ── Dark: page & cards ───────────────────────────────────── */
+[data-theme="dark"] body                { background-color: var(--ht-bg); }
+[data-theme="dark"] .bg-white          { background-color: var(--ht-card) !important; }
+[data-theme="dark"] .bg-gray-50        { background-color: var(--ht-bg)   !important; }
+[data-theme="dark"] .bg-gray-100       { background-color: #1e293b        !important; }
+
+/* page wrapper backgrounds set via inline style */
+[data-theme="dark"] [style*="background-color:#f5f5f5"],
+[data-theme="dark"] [style*="background-color: #f5f5f5"] { background-color: var(--ht-bg) !important; }
+
+/* white card backgrounds set via inline style */
+[data-theme="dark"] [style*="background-color:#fff;"],
+[data-theme="dark"] [style*="background-color: #fff;"],
+[data-theme="dark"] [style*="background-color:#ffffff"],
+[data-theme="dark"] [style*="background-color: #ffffff"] { background-color: var(--ht-card) !important; }
+
+/* warm cream table rows */
+[data-theme="dark"] [style*="background-color:#FFF8DC"],
+[data-theme="dark"] [style*="background-color: #FFF8DC"],
+[data-theme="dark"] [style*="background-color:#FFFACD"],
+[data-theme="dark"] [style*="background-color:#FFF5F5"] { background-color: var(--ht-surface) !important; }
+
+/* ── Dark: text ───────────────────────────────────────────── */
+[data-theme="dark"] .text-gray-800     { color: var(--ht-text)       !important; }
+[data-theme="dark"] .text-gray-700     { color: #cbd5e1              !important; }
+[data-theme="dark"] .text-gray-600     { color: #94a3b8              !important; }
+[data-theme="dark"] .text-gray-500     { color: #64748b              !important; }
+[data-theme="dark"] .text-gray-400     { color: #475569              !important; }
+
+[data-theme="dark"] [style*="color:#374151"]              { color: var(--ht-text)      !important; }
+[data-theme="dark"] [style*="color:#1f2937"],
+[data-theme="dark"] [style*="color:#111827"]              { color: var(--ht-text)      !important; }
+[data-theme="dark"] [style*="color:#6B7280"],
+[data-theme="dark"] [style*="color:#6b7280"]              { color: var(--ht-text-muted) !important; }
+[data-theme="dark"] [style*="color:#9CA3AF"],
+[data-theme="dark"] [style*="color:#9ca3af"]              { color: #64748b             !important; }
+
+/* ── Dark: borders ────────────────────────────────────────── */
+[data-theme="dark"] .border-gray-100   { border-color: var(--ht-border) !important; }
+[data-theme="dark"] .border-gray-200   { border-color: #334155          !important; }
+[data-theme="dark"] .border-gray-300   { border-color: #475569          !important; }
+[data-theme="dark"] [style*="border-color:#e5e7eb"] { border-color: var(--ht-border) !important; }
+
+/* ── Dark: inputs & selects ───────────────────────────────── */
+[data-theme="dark"] input[type="text"],
+[data-theme="dark"] input[type="password"],
+[data-theme="dark"] input[type="number"],
+[data-theme="dark"] input[type="date"],
+[data-theme="dark"] select {
+    background-color: var(--ht-input-bg) !important;
+    color: var(--ht-text)               !important;
+    border-color: var(--ht-border)      !important;
+}
+
+/* ── Dark: dropdown (language selector) ───────────────────── */
+[data-theme="dark"] .shadow-lg.bg-white,
+[data-theme="dark"] .shadow-lg.rounded-lg { background-color: var(--ht-card) !important; }
+[data-theme="dark"] .hover\:bg-gray-100:hover { background-color: #334155 !important; }
+[data-theme="dark"] .border.border-gray-200   { border-color: var(--ht-border) !important; }
+
+/* ── Dark: scrollbar (optional, webkit only) ──────────────── */
+[data-theme="dark"] ::-webkit-scrollbar-track { background: #0f172a; }
+[data-theme="dark"] ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }

@@ -1,12 +1,9 @@
 <?php
 
-// Screen: setting | Theme: gold/crimson | Stack: Laravel+Inertia+React+API+Docker+MySQL
-
 namespace App\Http\Controllers;
 
 use App\Models\Setting;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
 
 class SettingController extends Controller
 {
@@ -23,7 +20,9 @@ class SettingController extends Controller
             ]
         );
 
-        return Inertia::render('Setting', [
+        $view = auth()->user()->isAdmin() ? 'admin.setting' : 'setting';
+
+        return view($view, [
             'setting' => $setting,
         ]);
     }
