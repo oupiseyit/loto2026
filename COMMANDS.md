@@ -17,6 +17,8 @@ docker compose exec app bash               # Shell into PHP-FPM container
 docker compose exec db mysql -u root -p    # MySQL CLI
 ```
 
+
+
 ---
 
 ## Artisan (run inside Docker)
@@ -106,7 +108,7 @@ Output saved to:
 - `screenShort/web/{admin,master,staff}/`
 - `screenShort/mobile/{admin,master,staff}/`
 
-**Requires:** app running at `http://localhost:4040` + test accounts in DB.
+**Requires:** app running at `http://localhost` + test accounts in DB.
 
 ---
 
@@ -114,9 +116,9 @@ Output saved to:
 
 | Service     | URL                          |
 |-------------|------------------------------|
-| App         | http://localhost:4040        |
+| App         | http://localhost        |
 | phpMyAdmin  | http://localhost:4041        |
-| Swagger UI  | http://localhost:4040/api/documentation |
+| Swagger UI  | http://localhost/api/documentation |
 | Vite HMR    | http://localhost:5173        |
 
 ---

@@ -14,7 +14,10 @@
       "Bash(curl -s -c /tmp/lotto_cookies.txt -b /tmp/lotto_cookies.txt http://localhost:4040/login -o /dev/null -w \"%{http_code}\")",
       "Read(//private/tmp/**)",
       "Bash(head -371 /Users/pisey/Desktop/Lotto2026/src/resources/js/Pages/Home.jsx)",
-      "Read(//tmp/**)"
+      "Read(//tmp/**)",
+      "Bash(sudo lsof *)",
+      "Bash(curl -s -o /dev/null -w \"HTTP %{http_code}\" http://localhost)",
+      "Bash(curl -s -o /dev/null -w \"HTTP %{http_code}\" http://localhost/login)"
     ]
   }
 }

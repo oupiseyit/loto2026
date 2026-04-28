@@ -147,9 +147,9 @@ cd src && npm install && npm run build && cd ..
 
 | URL | Purpose |
 |---|---|
-| `http://localhost:4040` | Web application |
-| `http://localhost:4040/login` | Login page |
-| `http://localhost:4040/api/documentation` | Swagger API docs |
+| `http://localhost` | Web application |
+| `http://localhost/login` | Login page |
+| `http://localhost/api/documentation` | Swagger API docs |
 | `http://localhost:4041` | phpMyAdmin |
 
 ---
@@ -185,18 +185,18 @@ docker compose down -v
 
 ## Mobile API
 
-Base URL: `http://localhost:4040/api/v1`
+Base URL: `http://localhost/api/v1`
 
 Authentication: `Authorization: Bearer <token>`
 
 ```bash
 # Login
-curl -X POST http://localhost:4040/api/v1/login \
+curl -X POST http://localhost/api/v1/login \
   -H "Content-Type: application/json" \
   -d '{"username":"admin","password":"admin123"}'
 
 # Use returned token for subsequent requests
-curl http://localhost:4040/api/v1/me \
+curl http://localhost/api/v1/me \
   -H "Authorization: Bearer <token>"
 ```
 
@@ -337,7 +337,7 @@ node screenShort/capture-mobile.js
 ### Requirements
 
 - Docker containers must be running (`docker compose up -d`)
-- App accessible at `http://localhost:4040`
+- App accessible at `http://localhost`
 - Database seeded with default accounts (`docker compose exec app php artisan db:seed`)
 
 ### Output Structure
