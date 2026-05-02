@@ -1,0 +1,1879 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "HT Lotto API",
+        "description": "REST API for HT ភ្នាក់ Lottery Agent App. Roles: admin | master | staff.",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "/api/v1",
+            "description": "API v1"
+        }
+    ],
+    "paths": {
+        "/account": {
+            "get": {
+                "tags": [
+                    "Account"
+                ],
+                "summary": "Today's sales totals — staff: own; master: own staff; admin: all",
+                "operationId": "f020604f40c86daafc253792926cdb39",
+                "responses": {
+                    "200": {
+                        "description": "Sales summary",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "today_sales": {
+                                                    "type": "number",
+                                                    "example": 150000
+                                                },
+                                                "today_win": {
+                                                    "type": "number",
+                                                    "example": 20000
+                                                },
+                                                "today_count": {
+                                                    "type": "integer",
+                                                    "example": 10
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/account/sales/detail": {
+            "get": {
+                "tags": [
+                    "Account"
+                ],
+                "summary": "Today's sales breakdown by session — staff: own; master: own staff; admin: all",
+                "operationId": "89308aed350eefcb9f8971d0f7dd0b9f",
+                "responses": {
+                    "200": {
+                        "description": "Sales breakdown",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "session": {
+                                                        "type": "string",
+                                                        "enum": [
+                                                            "morning",
+                                                            "noon",
+                                                            "evening"
+                                                        ]
+                                                    },
+                                                    "count": {
+                                                        "type": "integer",
+                                                        "example": 10
+                                                    },
+                                                    "amount": {
+                                                        "type": "number",
+                                                        "example": 50000
+                                                    },
+                                                    "win": {
+                                                        "type": "number",
+                                                        "example": 5000
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/account/password": {
+            "post": {
+                "tags": [
+                    "Account"
+                ],
+                "summary": "Change own password — all roles",
+                "operationId": "09b5ee785db2535f40e0884cee7c6c0d",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "current_password",
+                                    "password",
+                                    "password_confirmation"
+                                ],
+                                "properties": {
+                                    "current_password": {
+                                        "type": "string",
+                                        "example": "oldpass"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "newpass123"
+                                    },
+                                    "password_confirmation": {
+                                        "type": "string",
+                                        "example": "newpass123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Password changed",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccessResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Wrong current password or validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Login and get Sanctum token",
+                "operationId": "72bf786ad8ff53c7391309c836350a8d",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "username",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "username": {
+                                        "type": "string",
+                                        "example": "staff01"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "password"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Login successful",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Login successful."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "token": {
+                                                    "type": "string",
+                                                    "example": "1|abc123"
+                                                },
+                                                "user": {
+                                                    "$ref": "#/components/schemas/User"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid credentials",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": []
+            }
+        },
+        "/logout": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Revoke current Sanctum token",
+                "operationId": "5660f1ae61b95f0283dfc205d5ffdad5",
+                "responses": {
+                    "200": {
+                        "description": "Logged out",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccessResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/me": {
+            "get": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Get authenticated user profile — all roles",
+                "operationId": "0fadd24761c66bfa1bfdc46dea94c0dd",
+                "responses": {
+                    "200": {
+                        "description": "Current user",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/User"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/bets": {
+            "get": {
+                "tags": [
+                    "Bets"
+                ],
+                "summary": "List today's tickets — staff/master: own only; admin: all",
+                "operationId": "a7d49cc1d5a255786e371ca42632a59e",
+                "parameters": [
+                    {
+                        "name": "date",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2026-05-02"
+                        }
+                    },
+                    {
+                        "name": "session",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "morning",
+                                "noon",
+                                "evening"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Ticket list",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Ticket"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Bets"
+                ],
+                "summary": "Submit a new ticket with bets — all roles",
+                "operationId": "92f4acd29afae2866fb0dbfcf337b1f7",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "session",
+                                    "bet_date",
+                                    "bets"
+                                ],
+                                "properties": {
+                                    "session": {
+                                        "type": "string",
+                                        "enum": [
+                                            "morning",
+                                            "noon",
+                                            "evening"
+                                        ]
+                                    },
+                                    "bet_date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2026-05-02"
+                                    },
+                                    "bets": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "bet_type": {
+                                                    "type": "string",
+                                                    "enum": [
+                                                        "ABCD",
+                                                        "LO"
+                                                    ]
+                                                },
+                                                "letter": {
+                                                    "type": "string",
+                                                    "enum": [
+                                                        "A",
+                                                        "B",
+                                                        "C",
+                                                        "D",
+                                                        "F",
+                                                        "I",
+                                                        "N"
+                                                    ]
+                                                },
+                                                "position": {
+                                                    "type": "string",
+                                                    "enum": [
+                                                        "X",
+                                                        "W",
+                                                        "H",
+                                                        "W*"
+                                                    ]
+                                                },
+                                                "number": {
+                                                    "type": "string",
+                                                    "example": "25"
+                                                },
+                                                "amount": {
+                                                    "type": "number",
+                                                    "example": 5000
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Ticket created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Bets submitted successfully."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "invoice_number": {
+                                                    "type": "string",
+                                                    "example": "INV-20260502-0001"
+                                                },
+                                                "total_amount": {
+                                                    "type": "number",
+                                                    "example": 15000
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/bets/{id}": {
+            "get": {
+                "tags": [
+                    "Bets"
+                ],
+                "summary": "Get a ticket with its bets — own only",
+                "operationId": "6ae6286b4f92f8ed302fcbd71673babd",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Ticket detail",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Ticket"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/records": {
+            "get": {
+                "tags": [
+                    "Records"
+                ],
+                "summary": "Paginated bet records — staff: own; master: own staff; admin: all",
+                "operationId": "e8dec2dbe875a7d3664da1931ffd0f04",
+                "parameters": [
+                    {
+                        "name": "date",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2026-05-02"
+                        }
+                    },
+                    {
+                        "name": "session",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "morning",
+                                "noon",
+                                "evening"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Record list",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Ticket"
+                                            }
+                                        },
+                                        "totals": {
+                                            "properties": {
+                                                "total_count": {
+                                                    "type": "integer",
+                                                    "example": 10
+                                                },
+                                                "total_amount": {
+                                                    "type": "number",
+                                                    "example": 50000
+                                                },
+                                                "total_win": {
+                                                    "type": "number",
+                                                    "example": 5000
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "meta": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "last_page": {
+                                                    "type": "integer",
+                                                    "example": 3
+                                                },
+                                                "total": {
+                                                    "type": "integer",
+                                                    "example": 60
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/records/winning": {
+            "get": {
+                "tags": [
+                    "Records"
+                ],
+                "summary": "Winning tickets only — staff: own; master: own staff; admin: all",
+                "operationId": "9ba0a0e07316e1dffd2f0f6ea26db7c8",
+                "parameters": [
+                    {
+                        "name": "date",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2026-05-02"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Winning record list",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Ticket"
+                                            }
+                                        },
+                                        "meta": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer"
+                                                },
+                                                "last_page": {
+                                                    "type": "integer"
+                                                },
+                                                "total": {
+                                                    "type": "integer"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/report/summary": {
+            "get": {
+                "tags": [
+                    "Reports"
+                ],
+                "summary": "Summary report — admin: all staff; master: own staff only",
+                "operationId": "e7578ce2b43eb54378f547bd146d5e87",
+                "parameters": [
+                    {
+                        "name": "from",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2026-05-01"
+                        }
+                    },
+                    {
+                        "name": "to",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2026-05-02"
+                        }
+                    },
+                    {
+                        "name": "staff_id",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "session",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "morning",
+                                "noon",
+                                "evening"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Summary",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/ReportSummary"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Staff forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/report/daily": {
+            "get": {
+                "tags": [
+                    "Reports"
+                ],
+                "summary": "Daily sales breakdown — admin: all; master: own staff",
+                "operationId": "b5744e20579ad0cbbc8896d7b558e9c3",
+                "parameters": [
+                    {
+                        "name": "from",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "name": "to",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Daily breakdown",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/ReportDaily"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Staff forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/report/staff": {
+            "get": {
+                "tags": [
+                    "Reports"
+                ],
+                "summary": "Per-staff performance — admin: all; master: own staff",
+                "operationId": "e3a18747d6e727e49b4ed085d155ad12",
+                "parameters": [
+                    {
+                        "name": "from",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "name": "to",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Staff breakdown",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/ReportStaff"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Staff forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/report/export": {
+            "get": {
+                "tags": [
+                    "Reports"
+                ],
+                "summary": "Export report data (summary JSON for mobile PDF render) — admin and master only",
+                "operationId": "ae82e72756305edd88856125ac43b03b",
+                "parameters": [
+                    {
+                        "name": "from",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "name": "to",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Export data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/ReportSummary"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/results": {
+            "get": {
+                "tags": [
+                    "Results"
+                ],
+                "summary": "Get result grid for a date and session — all roles",
+                "operationId": "61778a94f753991a396df2125348dd28",
+                "parameters": [
+                    {
+                        "name": "date",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2026-05-02"
+                        }
+                    },
+                    {
+                        "name": "session",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "morning",
+                            "enum": [
+                                "morning",
+                                "noon",
+                                "evening"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Result grid",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/ResultItem"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Results"
+                ],
+                "summary": "Enter results for a session — admin only",
+                "operationId": "66d6d84ee3a4ee08a5e55e5eab4835c0",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "result_date",
+                                    "session",
+                                    "results"
+                                ],
+                                "properties": {
+                                    "result_date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2026-05-02"
+                                    },
+                                    "session": {
+                                        "type": "string",
+                                        "enum": [
+                                            "morning",
+                                            "noon",
+                                            "evening"
+                                        ]
+                                    },
+                                    "results": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "position": {
+                                                    "type": "string",
+                                                    "example": "A"
+                                                },
+                                                "number": {
+                                                    "type": "string",
+                                                    "example": "25"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Results saved",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/ResultItem"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Admin only",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/results/{id}": {
+            "put": {
+                "tags": [
+                    "Results"
+                ],
+                "summary": "Update a single result entry — admin only",
+                "operationId": "e5f94a5c9b0d961a82ebfb55d18bbee8",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "number"
+                                ],
+                                "properties": {
+                                    "number": {
+                                        "type": "string",
+                                        "example": "42"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Result updated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/ResultItem"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Admin only",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/settings": {
+            "get": {
+                "tags": [
+                    "Settings"
+                ],
+                "summary": "Get printer settings for current user — all roles",
+                "operationId": "ae13071e9797b979d374342e6ca95a4f",
+                "responses": {
+                    "200": {
+                        "description": "Settings",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Setting"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Settings"
+                ],
+                "summary": "Update printer settings — all roles",
+                "operationId": "bf971e60d19c49f286afa6ec6ec1cf5d",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "printer_size",
+                                    "logo_mode"
+                                ],
+                                "properties": {
+                                    "bluetooth_enabled": {
+                                        "type": "boolean",
+                                        "example": true
+                                    },
+                                    "printer_size": {
+                                        "type": "string",
+                                        "enum": [
+                                            "58mm",
+                                            "80mm"
+                                        ]
+                                    },
+                                    "logo_mode": {
+                                        "type": "string",
+                                        "enum": [
+                                            "logo",
+                                            "text"
+                                        ]
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Settings updated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccessResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/settings/commission": {
+            "put": {
+                "tags": [
+                    "Settings"
+                ],
+                "summary": "Update commission settings — admin only",
+                "operationId": "f6e2899fe7a1ddeaab1e10ab780e54d5",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "commission_mode"
+                                ],
+                                "properties": {
+                                    "commission_mode": {
+                                        "type": "string",
+                                        "enum": [
+                                            "default",
+                                            "custom"
+                                        ]
+                                    },
+                                    "commission_value": {
+                                        "type": "number",
+                                        "example": 5,
+                                        "maximum": 100,
+                                        "minimum": 0
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Commission updated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccessResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Admin only",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "ErrorResponse": {
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Unauthorized"
+                    },
+                    "errors": {
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "SuccessResponse": {
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "OK"
+                    }
+                },
+                "type": "object"
+            },
+            "Bet": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "bet_type": {
+                        "type": "string",
+                        "enum": [
+                            "ABCD",
+                            "LO"
+                        ]
+                    },
+                    "letter": {
+                        "type": "string",
+                        "enum": [
+                            "A",
+                            "B",
+                            "C",
+                            "D",
+                            "F",
+                            "I",
+                            "N"
+                        ]
+                    },
+                    "position": {
+                        "type": "string",
+                        "enum": [
+                            "X",
+                            "W",
+                            "H",
+                            "W*"
+                        ]
+                    },
+                    "number": {
+                        "type": "string",
+                        "example": "25"
+                    },
+                    "amount": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 5000
+                    }
+                },
+                "type": "object"
+            },
+            "ReportSummary": {
+                "properties": {
+                    "total_bets": {
+                        "type": "integer",
+                        "example": 120
+                    },
+                    "total_amount": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 450000
+                    },
+                    "total_win": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 80000
+                    },
+                    "net": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 370000
+                    },
+                    "by_session": {
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "ReportDaily": {
+                "properties": {
+                    "date": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2026-05-01"
+                    },
+                    "bets": {
+                        "type": "integer",
+                        "example": 40
+                    },
+                    "amount": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 150000
+                    },
+                    "win": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 20000
+                    }
+                },
+                "type": "object"
+            },
+            "ReportStaff": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 3
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "បង ម៉េន"
+                    },
+                    "bets": {
+                        "type": "integer",
+                        "example": 40
+                    },
+                    "amount": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 150000
+                    },
+                    "win": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 20000
+                    },
+                    "net": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 130000
+                    }
+                },
+                "type": "object"
+            },
+            "ResultItem": {
+                "properties": {
+                    "position": {
+                        "type": "string",
+                        "example": "A"
+                    },
+                    "number": {
+                        "type": "string",
+                        "example": "25"
+                    }
+                },
+                "type": "object"
+            },
+            "Setting": {
+                "properties": {
+                    "bluetooth": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "device": {
+                        "type": "string",
+                        "enum": [
+                            "58mm",
+                            "80mm"
+                        ]
+                    },
+                    "logo": {
+                        "type": "string",
+                        "enum": [
+                            "logo",
+                            "text"
+                        ]
+                    },
+                    "commission": {
+                        "type": "string",
+                        "enum": [
+                            "default",
+                            "custom"
+                        ]
+                    }
+                },
+                "type": "object"
+            },
+            "Ticket": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "invoice_number": {
+                        "type": "string",
+                        "example": "INV-20260502-0001"
+                    },
+                    "session": {
+                        "type": "string",
+                        "enum": [
+                            "morning",
+                            "noon",
+                            "evening"
+                        ]
+                    },
+                    "bet_date": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2026-05-02"
+                    },
+                    "total_amount": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 15000
+                    },
+                    "win_amount": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 0
+                    },
+                    "status": {
+                        "type": "string",
+                        "enum": [
+                            "draft",
+                            "pending",
+                            "settled"
+                        ]
+                    },
+                    "bets_count": {
+                        "type": "integer",
+                        "example": 3
+                    }
+                },
+                "type": "object"
+            },
+            "User": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "បង ម៉េន"
+                    },
+                    "username": {
+                        "type": "string",
+                        "example": "staff01"
+                    },
+                    "role": {
+                        "type": "string",
+                        "enum": [
+                            "admin",
+                            "master",
+                            "staff"
+                        ]
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "bearerFormat": "sanctum",
+                "scheme": "bearer"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Auth",
+            "description": "Authentication"
+        },
+        {
+            "name": "Bets",
+            "description": "Betting — all roles"
+        },
+        {
+            "name": "Records",
+            "description": "Bet records — all roles"
+        },
+        {
+            "name": "Results",
+            "description": "Lottery results"
+        },
+        {
+            "name": "Reports",
+            "description": "Reports — admin and master only"
+        },
+        {
+            "name": "Settings",
+            "description": "Printer and commission settings"
+        },
+        {
+            "name": "Account",
+            "description": "Account and sales"
+        }
+    ]
+}

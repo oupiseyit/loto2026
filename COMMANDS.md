@@ -32,6 +32,8 @@ docker compose exec app php artisan db:seed              # Run all seeders
 docker compose exec app php artisan db:seed --class=CurrencySeeder
 docker compose exec app php artisan db:seed --class=DatabaseSeeder
 docker compose exec app php artisan db:wipe              # Drop all tables
+
+docker compose exec app composer i && npm i 
 ```
 
 ### Cache & Optimize
@@ -41,7 +43,11 @@ docker compose exec app php artisan config:clear         # Clear config cache
 docker compose exec app php artisan route:clear          # Clear route cache
 docker compose exec app php artisan view:clear           # Clear compiled views
 docker compose exec app php artisan optimize             # Cache config + routes + views
-docker compose exec app php artisan optimize:clear       # Clear all caches
+docker compose exec app php artisan optimize:clear  
+     # Clear all caches
+docker compose exec app bash 
+
+php artisan cache:clear&&php artisan route:clear&&php artisan config:clear&&php artisan view:clear&&php artisan clear-compiled 
 ```
 
 ### Livewire
@@ -130,3 +136,4 @@ Output saved to:
 | Admin  | admin    | admin123   |
 | Master | master1  | master123  |
 | Staff  | staff1   | staff123   |
+

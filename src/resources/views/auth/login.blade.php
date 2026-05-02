@@ -49,7 +49,8 @@
             </button>
         </form>
 
-        {{-- Quick-fill dev buttons --}}
+        {{-- Quick-fill dev buttons (hidden in production) --}}
+        @unless(app()->isProduction())
         <div class="flex gap-2 mt-3" x-data>
             @foreach ([['admin','admin','admin123'],['master','master1','master123'],['staff','staff1','staff123']] as [$role,$user,$pass])
             <button type="button"
@@ -60,5 +61,6 @@
             </button>
             @endforeach
         </div>
+        @endunless
     </div>
 </x-guest-layout>

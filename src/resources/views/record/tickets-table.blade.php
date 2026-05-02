@@ -87,24 +87,24 @@
                                                 <span class="text-xs font-semibold text-gray-500">{{ $bet->letter }}</span>
                                                 <span class="text-xs px-1.5 py-0.5 rounded font-semibold"
                                                       style="background-color:{{ $betWon ? '#dcfce7' : '#f3f4f6' }};color:{{ $betWon ? '#16a34a' : '#6b7280' }};">
-                                                    {{ $betWon ? '✓ Win' : '✗ Loss' }}
+                                                    {{ $betWon ? '✓ '.__('win') : '✗ '.__('loss') }}
                                                 </span>
                                             </div>
                                             <div class="text-lg font-bold text-gray-800 mb-1">{{ $bet->number }}</div>
                                             <div class="text-xs text-gray-600 mb-1">
-                                                <span class="font-semibold">Type:</span> {{ $bet->bet_type }}
+                                                <span class="font-semibold">{{ __('type') }}:</span> {{ $bet->bet_type }}
                                             </div>
                                             <div class="text-xs text-gray-600 mb-1">
-                                                <span class="font-semibold">Pos:</span> {{ $bet->position }}
+                                                <span class="font-semibold">{{ __('pos') }}:</span> {{ $bet->position }}
                                             </div>
                                             <div class="border-t border-gray-200 pt-2 mt-2">
                                                 <div class="flex justify-between text-xs mb-1">
-                                                    <span class="text-gray-600">Bet:</span>
+                                                    <span class="text-gray-600">{{ __('bet') }}:</span>
                                                     <span class="font-semibold">{{ number_format($bet->amount) }}</span>
                                                 </div>
                                                 @if ($betWon)
                                                     <div class="flex justify-between text-xs">
-                                                        <span class="text-gray-600">Win:</span>
+                                                        <span class="text-gray-600">{{ __('win') }}:</span>
                                                         <span class="font-bold" style="color:#16a34a;">{{ number_format($winAmt) }}</span>
                                                     </div>
                                                 @endif
@@ -113,7 +113,7 @@
                                     @endforeach
                                 </div>
                             @else
-                                <p class="text-gray-400 text-sm">No bets found</p>
+                                <p class="text-gray-400 text-sm">{{ __('no_bets_found') }}</p>
                             @endif
                         </div>
                     </td>

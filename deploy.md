@@ -367,7 +367,7 @@ jobs:
 ssh deploy@YOUR_VPS_IP
 
 # 2. Clone repo
-git clone git@github.com:your-org/lotto2026.git /var/www/lotto
+git clone https://github.com/oupiseyit/loto2026.git /var/www/lotto
 cd /var/www/lotto
 
 # 3. Copy and edit env

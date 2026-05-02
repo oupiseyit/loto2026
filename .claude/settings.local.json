@@ -24,7 +24,9 @@
       "Bash(python3 -c \"import json,sys; cmds=json.load\\(sys.stdin\\)['commands']; [print\\(c['name']+'|'+c['description']\\) for c in cmds if not c['name'].startswith\\('_'\\)]\")",
       "Bash(python3 -c \"import json,sys; p=json.load\\(sys.stdin\\); [print\\(k+': '+v\\) for k,v in p.get\\('scripts',{}\\).items\\(\\)]\")",
       "Bash(sshpass -p '@Gmail.com12345' ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 kaka@1217.216.111.191 \"echo 'Login OK' && whoami && hostname\")",
-      "Bash(sshpass -p '@Gmail.com12345' ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 kaka@217.216.111.191 \"echo 'Login OK' && whoami && hostname && uname -a\")"
+      "Bash(sshpass -p '@Gmail.com12345' ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 kaka@217.216.111.191 \"echo 'Login OK' && whoami && hostname && uname -a\")",
+      "Bash(sshpass -p '@Gmail.com12345' ssh -o StrictHostKeyChecking=no -o ConnectTimeout=15 kaka@217.216.111.191 \"cd /root/root && echo '=== .env ===' && grep 'APP_ENV\\\\|APP_URL\\\\|APP_DEBUG\\\\|VITE' src/.env && echo '=== Docker containers ===' && docker compose ps 2>/dev/null || docker compose -f docker-compose.prod.yml ps 2>/dev/null && echo '=== public/hot ===' && ls src/public/hot 2>/dev/null && echo 'EXISTS' || echo 'NOT EXISTS' && echo '=== public/build ===' && ls src/public/build/ 2>/dev/null || echo 'NOT BUILT'\")",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost/api/documentation)"
     ],
     "additionalDirectories": [
       "/Users/pisey/Desktop/Lotto2026/.claude",

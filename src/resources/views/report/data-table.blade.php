@@ -2,12 +2,12 @@
     <table class="w-full text-sm border-collapse">
         <thead>
             <tr style="background-color:#DC143C;">
-                <th class="px-3 py-2.5 text-left text-white font-semibold">Staff</th>
-                <th class="px-3 py-2.5 text-center text-white font-semibold">Session</th>
-                <th class="px-3 py-2.5 text-right text-white font-semibold">Tickets</th>
-                <th class="px-3 py-2.5 text-right text-white font-semibold">Amount</th>
-                <th class="px-3 py-2.5 text-right text-white font-semibold">Win</th>
-                <th class="px-3 py-2.5 text-right text-white font-semibold">Net</th>
+                <th class="px-3 py-2.5 text-left text-white font-semibold">{{ __('staff') }}</th>
+                <th class="px-3 py-2.5 text-center text-white font-semibold">{{ __('session') }}</th>
+                <th class="px-3 py-2.5 text-right text-white font-semibold">{{ __('tickets') }}</th>
+                <th class="px-3 py-2.5 text-right text-white font-semibold">{{ __('amount') }}</th>
+                <th class="px-3 py-2.5 text-right text-white font-semibold">{{ __('win') }}</th>
+                <th class="px-3 py-2.5 text-right text-white font-semibold">{{ __('net') }}</th>
             </tr>
         </thead>
         <tbody>
@@ -25,7 +25,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="6" class="py-12 text-center text-gray-400 text-sm">No data found</td>
+                    <td colspan="6" class="py-12 text-center text-gray-400 text-sm">{{ __('no_data') }}</td>
                 </tr>
             @endforelse
         </tbody>

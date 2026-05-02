@@ -17,7 +17,26 @@
       "Read(//tmp/**)",
       "Bash(sudo lsof *)",
       "Bash(curl -s -o /dev/null -w \"HTTP %{http_code}\" http://localhost)",
-      "Bash(curl -s -o /dev/null -w \"HTTP %{http_code}\" http://localhost/login)"
+      "Bash(curl -s -o /dev/null -w \"HTTP %{http_code}\" http://localhost/login)",
+      "Bash(sshpass -p '@Gmail.com12345' ssh -o StrictHostKeyChecking=no -o ConnectTimeout=15 root@217.216.111.191 \"echo '=== CWD ===' && ls /root/ && echo '=== PROJECT ===' && ls /root/root/ 2>/dev/null || echo 'no /root/root'\")",
+      "Bash(sshpass -p '@Gmail.com12345' ssh -o StrictHostKeyChecking=no -o ConnectTimeout=15 kaka@217.216.111.191 \"echo 'connected as:' && whoami && echo '=== home ===' && ls ~ && echo '=== sudo test ===' && echo '@Gmail.com12345' | sudo -S ls /root/root 2>/dev/null && echo 'sudo works' || echo 'sudo failed'\")",
+      "Bash(sshpass -p '@Gmail.com12345' ssh -o StrictHostKeyChecking=no -o ConnectTimeout=15 kaka@217.216.111.191 \"echo '@Gmail.com12345' | sudo -S find /root /home /var/www -maxdepth 3 -name 'docker-compose.yml' 2>/dev/null\")",
+      "Bash(sshpass -p @Gmail.com12345 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=15 kaka@217.216.111.191 'echo '\\\\''@Gmail.com12345'\\\\'' | sudo -S bash -c '\\\\'' *)",
+      "Bash(sshpass -p '@Gmail.com12345' scp -o StrictHostKeyChecking=no /Users/pisey/Desktop/Lotto2026/src/bootstrap/app.php kaka@217.216.111.191:/tmp/app.php)",
+      "Bash(sshpass -p @Gmail.com12345 ssh -o StrictHostKeyChecking=no kaka@217.216.111.191 'echo '\\\\''@Gmail.com12345'\\\\'' | sudo -S bash -c '\\\\'' *)",
+      "Bash(sshpass -p '@Gmail.com12345' ssh -o StrictHostKeyChecking=no kaka@217.216.111.191 \"echo '@Gmail.com12345' | sudo -S bash -c 'cd /var/www/lotto && docker compose exec -T app php artisan tinker --execute=\\\\\"echo url\\(\\\\\\\\\\\\\"/livewire/update\\\\\\\\\\\\\"\\);\\\\\"'\")",
+      "Bash(sshpass -p '@Gmail.com12345' ssh -o StrictHostKeyChecking=no kaka@217.216.111.191 \"echo '@Gmail.com12345' | sudo -S bash -c 'cd /var/www/lotto && docker compose exec -T app tail -50 storage/logs/laravel.log'\")",
+      "Bash(sshpass -p '@Gmail.com12345' ssh -o StrictHostKeyChecking=no kaka@217.216.111.191 \"echo '@Gmail.com12345' | sudo -S bash -c 'tail -80 /var/www/lotto/src/storage/logs/laravel.log 2>/dev/null || echo NO LOG'\")",
+      "Bash(sshpass -p '@Gmail.com12345' ssh -o StrictHostKeyChecking=no kaka@217.216.111.191 \"echo '@Gmail.com12345' | sudo -S bash -c 'ls /var/www/lotto/src/storage/logs/ && find /var/www/lotto/src/storage/logs/ -name \\\\\"*.log\\\\\" -exec tail -50 {} \\\\;'\")",
+      "Bash(sshpass -p '@Gmail.com12345' ssh -o StrictHostKeyChecking=no kaka@217.216.111.191 \"echo '@Gmail.com12345' | sudo -S docker logs lotto_app --tail=30 2>&1\")",
+      "Bash(sshpass -p '@Gmail.com12345' ssh -o StrictHostKeyChecking=no kaka@217.216.111.191 \"echo '@Gmail.com12345' | sudo -S grep -E 'APP_URL|SESSION|SANCTUM|LIVEWIRE' /var/www/lotto/src/.env\")",
+      "Bash(sshpass -p '@Gmail.com12345' ssh -o StrictHostKeyChecking=no kaka@217.216.111.191)",
+      "Bash(sshpass -p '@Gmail.com12345' ssh -o StrictHostKeyChecking=no -t kaka@217.216.111.191 'echo \"@Gmail.com12345\" | sudo -S sh -c \"cd /var/www/lotto && docker compose stop node && docker compose rm -f node && rm -f src/public/hot && echo HOT_DELETED && docker compose exec -T app php artisan view:clear && docker compose exec -T app php artisan view:cache && echo DONE\"')",
+      "Bash(sshpass -p '@Gmail.com12345' ssh -o StrictHostKeyChecking=no -t kaka@217.216.111.191 'echo \"@Gmail.com12345\" | sudo -S sh -c \"curl -s http://localhost/login | grep -o \\\\\"src=[^>]*\\\\\" | head -6 && echo --- && ls /var/www/lotto/src/public/hot 2>/dev/null && echo HOT_EXISTS || echo HOT_GONE\"')",
+      "WebSearch"
+    ],
+    "additionalDirectories": [
+      "/Users/pisey/Desktop/Lotto2026/src/app"
     ]
   }
 }

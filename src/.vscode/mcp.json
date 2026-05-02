@@ -1,0 +1,17 @@
+{
+    "servers": {
+        "laravel-boost": {
+            "command": "docker",
+            "args": [
+                "compose",
+                "exec",
+                "-i",
+                "app",
+                "php",
+                "artisan",
+                "boost:mcp"
+            ],
+            "cwd": "/Users/pisey/Desktop/Lotto2026"
+        }
+    }
+}

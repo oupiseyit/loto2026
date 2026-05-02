@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('letter', 10);
             $table->string('position', 5);
             $table->string('number', 10);
-            $table->decimal('amount', 10, 2);
+            $table->decimal('amount', 12, 2);
             $table->boolean('is_winner')->default(false);
             $table->decimal('win_amount', 12, 2)->default(0);
             $table->timestamps();

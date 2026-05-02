@@ -66,11 +66,11 @@
                 @else
                     @foreach ($bets as $idx => $bet)
                         <div wire:click="removeBet('{{ $bet['id'] }}')"
-                             class="grid grid-cols-5 text-center text-xs py-1.5 border-b cursor-pointer hover:opacity-70"
+                             class="grid grid-cols-5 text-center text-base py-1.5 border-b cursor-pointer hover:opacity-70"
                              style="background-color:{{ $idx % 2 === 0 ? '#FFF8DC' : '#fff' }};border-color:#e5e7eb;">
                             <span class="font-medium">{{ $bet['letter'] }}</span>
                             <span>{{ $bet['number'] }}</span>
-                            <span class="uppercase text-xs" style="color:#DC143C;">{{ $bet['bet_type'] }}</span>
+                            <span class="uppercase" style="color:#DC143C;">{{ $bet['bet_type'] }}</span>
                             <span>{{ number_format($bet['amount']) }}</span>
                             <span style="color:#D4A017;">{{ $bet['position'] }}</span>
                         </div>
@@ -85,7 +85,7 @@
                 </div>
                 <button wire:click="submitBets" type="button"
                         {{ empty($bets) ? 'disabled' : '' }}
-                        class="w-full py-2 rounded-lg text-white font-bold text-sm disabled:opacity-50"
+                        class="w-full py-2 rounded-lg text-white font-bold text-sm disabled:opacity-50 border-2 py-3 text-3xl"
                         style="background-color:#DC143C;">
                     <span wire:loading.remove wire:target="submitBets">{{ __('submit') }}</span>
                     <span wire:loading wire:target="submitBets">{{ __('submitting') }}</span>
@@ -123,7 +123,7 @@
                 @else
                     @foreach ($bets as $idx => $bet)
                         <div wire:click="removeBet('{{ $bet['id'] }}')"
-                             class="grid grid-cols-5 text-center text-[11px] py-1.5 border-b cursor-pointer hover:opacity-70"
+                             class="grid grid-cols-5 text-center text-sm py-1.5 border-b cursor-pointer hover:opacity-70"
                              style="background-color:{{ $idx % 2 === 0 ? '#FFF8DC' : '#fff' }};border-color:#e5e7eb;">
                             <span class="font-medium">{{ $bet['letter'] }}</span>
                             <span>{{ $bet['number'] }}</span>

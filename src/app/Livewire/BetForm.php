@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\DTOs\BetItemDTO;
 use App\Models\Bet;
 use App\Models\Ticket;
 use Livewire\Attributes\Computed;
@@ -61,25 +62,25 @@ class BetForm extends Component
             $this->draftTicketId = $ticket->id;
         }
 
-        $bet = Bet::create([
-            'ticket_id' => $this->draftTicketId,
-            'user_id'   => auth()->id(),
-            'bet_type'  => $this->betType,
-            'letter'    => $this->letter,
-            'position'  => $this->position,
-            'number'    => $number,
-            'amount'    => (float) $amount,
-        ]);
+        $dto = new BetItemDTO(
+            betType:  $this->betType,
+            letter:   $this->letter,
+            position: $this->position,
+            number:   $number,
+            amount:   (float) $amount,
+        );
+
+        $bet = Bet::create($dto->toModelArray($this->draftTicketId, auth()->id()));
 
         $this->syncTotalAmount();
 
         $this->bets[] = [
             'id'       => $bet->id,
-            'bet_type' => $bet->bet_type,
-            'letter'   => $bet->letter,
-            'position' => $bet->position,
-            'number'   => $bet->number,
-            'amount'   => (float) $bet->amount,
+            'bet_type' => $dto->betType,
+            'letter'   => $dto->letter,
+            'position' => $dto->position,
+            'number'   => $dto->number,
+            'amount'   => $dto->amount,
         ];
     }
 

@@ -1,7 +1,5 @@
 <?php
 
-// Screen: record | Theme: gold/crimson | Stack: Laravel+Inertia+React+API+Docker+MySQL
-
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
@@ -9,24 +7,52 @@ use App\Http\Resources\RecordResource;
 use App\Models\Ticket;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use OpenApi\Attributes as OA;
 
 class RecordController extends Controller
 {
-    /**
-     * GET /api/v1/records
-     * Query params: ?date=YYYY-MM-DD&session=morning|noon|evening&page=1
-     */
+    #[OA\Get(
+        path: '/records',
+        summary: 'Paginated bet records — staff: own; master: own staff; admin: all',
+        security: [['bearerAuth' => []]],
+        tags: ['Records'],
+        parameters: [
+            new OA\Parameter(name: 'date',    in: 'query', required: false, schema: new OA\Schema(type: 'string', format: 'date', example: '2026-05-02')),
+            new OA\Parameter(name: 'session', in: 'query', required: false, schema: new OA\Schema(type: 'string', enum: ['morning', 'noon', 'evening'])),
+            new OA\Parameter(name: 'page',    in: 'query', required: false, schema: new OA\Schema(type: 'integer', example: 1)),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Record list',
+                content: new OA\JsonContent(properties: [
+                    new OA\Property(property: 'success', type: 'boolean', example: true),
+                    new OA\Property(property: 'data',    type: 'array',   items: new OA\Items(ref: '#/components/schemas/Ticket')),
+                    new OA\Property(property: 'totals', type: 'object', properties: [
+                        new OA\Property(property: 'total_count',  type: 'integer', example: 10),
+                        new OA\Property(property: 'total_amount', type: 'number',  example: 50000),
+                        new OA\Property(property: 'total_win',    type: 'number',  example: 5000),
+                    ]),
+                    new OA\Property(property: 'meta', type: 'object', properties: [
+                        new OA\Property(property: 'current_page', type: 'integer', example: 1),
+                        new OA\Property(property: 'last_page',    type: 'integer', example: 3),
+                        new OA\Property(property: 'total',        type: 'integer', example: 60),
+                    ]),
+                ])
+            ),
+            new OA\Response(response: 401, description: 'Unauthenticated',
+                content: new OA\JsonContent(ref: '#/components/schemas/ErrorResponse')
+            ),
+        ]
+    )]
     public function index(Request $request): JsonResponse
     {
         $user    = auth()->user();
         $date    = $request->date    ?? today()->toDateString();
         $session = $request->session;
 
-        $query = Ticket::with('user')
-            ->withCount('bets')
-            ->whereDate('bet_date', $date);
+        $query = Ticket::with('user')->withCount('bets')->whereDate('bet_date', $date);
 
-        // Role scoping
         match ($user->role) {
             'staff'  => $query->where('user_id', $user->id),
             'master' => $query->whereHas('user', fn ($q) => $q->where('created_by', $user->id)),
@@ -59,17 +85,38 @@ class RecordController extends Controller
         ]);
     }
 
-    /**
-     * GET /api/v1/records/winning
-     * Winning tickets only.
-     */
+    #[OA\Get(
+        path: '/records/winning',
+        summary: 'Winning tickets only — staff: own; master: own staff; admin: all',
+        security: [['bearerAuth' => []]],
+        tags: ['Records'],
+        parameters: [
+            new OA\Parameter(name: 'date', in: 'query', required: false, schema: new OA\Schema(type: 'string', format: 'date', example: '2026-05-02')),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Winning record list',
+                content: new OA\JsonContent(properties: [
+                    new OA\Property(property: 'success', type: 'boolean', example: true),
+                    new OA\Property(property: 'data',    type: 'array',   items: new OA\Items(ref: '#/components/schemas/Ticket')),
+                    new OA\Property(property: 'meta', type: 'object', properties: [
+                        new OA\Property(property: 'current_page', type: 'integer'),
+                        new OA\Property(property: 'last_page',    type: 'integer'),
+                        new OA\Property(property: 'total',        type: 'integer'),
+                    ]),
+                ])
+            ),
+            new OA\Response(response: 401, description: 'Unauthenticated',
+                content: new OA\JsonContent(ref: '#/components/schemas/ErrorResponse')
+            ),
+        ]
+    )]
     public function winning(Request $request): JsonResponse
     {
-        $user = auth()->user();
-        $date = $request->date ?? today()->toDateString();
-
-        $query = Ticket::with('user')
-            ->withCount('bets')
+        $user  = auth()->user();
+        $date  = $request->date ?? today()->toDateString();
+        $query = Ticket::with('user')->withCount('bets')
             ->whereDate('bet_date', $date)
             ->where('win_amount', '>', 0);
 

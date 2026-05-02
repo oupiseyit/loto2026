@@ -1,6 +1,6 @@
 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
     <div class="flex items-center gap-3 mb-4">
-        <h2 class="text-base font-bold" style="color:#DC143C;">Today's Sales</h2>
+        <h2 class="text-base font-bold" style="color:#DC143C;">{{ __('today_sales') }}</h2>
         <div class="flex-1 h-px" style="background-color:#DC143C33;"></div>
     </div>
     <div class="flex flex-wrap gap-4">
