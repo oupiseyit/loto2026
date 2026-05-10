@@ -18,6 +18,7 @@
             </form>
 
             @if ($isAdmin)
+                @livewire('bet-time-settings')
                 @livewire('currency-manager')
             @endif
 

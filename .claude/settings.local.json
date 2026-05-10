@@ -26,7 +26,20 @@
       "Bash(sshpass -p '@Gmail.com12345' ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 kaka@1217.216.111.191 \"echo 'Login OK' && whoami && hostname\")",
       "Bash(sshpass -p '@Gmail.com12345' ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 kaka@217.216.111.191 \"echo 'Login OK' && whoami && hostname && uname -a\")",
       "Bash(sshpass -p '@Gmail.com12345' ssh -o StrictHostKeyChecking=no -o ConnectTimeout=15 kaka@217.216.111.191 \"cd /root/root && echo '=== .env ===' && grep 'APP_ENV\\\\|APP_URL\\\\|APP_DEBUG\\\\|VITE' src/.env && echo '=== Docker containers ===' && docker compose ps 2>/dev/null || docker compose -f docker-compose.prod.yml ps 2>/dev/null && echo '=== public/hot ===' && ls src/public/hot 2>/dev/null && echo 'EXISTS' || echo 'NOT EXISTS' && echo '=== public/build ===' && ls src/public/build/ 2>/dev/null || echo 'NOT BUILT'\")",
-      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost/api/documentation)"
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost/api/documentation)",
+      "Read(//Users/pisey/.docker/run/**)",
+      "Read(//var/run/**)",
+      "Bash(DOCKER_HOST=unix:///Users/pisey/.docker/run/docker.sock docker compose up -d)",
+      "Bash(DOCKER_HOST=unix:///Users/pisey/.docker/run/docker.sock docker compose exec app php artisan migrate --force)",
+      "Bash(DOCKER_HOST=unix:///Users/pisey/.docker/run/docker.sock docker compose exec app php artisan db:seed --class=BetTimeSettingSeeder --force)",
+      "Bash(DOCKER_HOST=unix:///Users/pisey/.docker/run/docker.sock docker compose exec app php artisan tinker --execute 'echo App\\\\Models\\\\BetTimeSetting::count\\(\\) . \" sessions seeded\";')",
+      "Bash(DOCKER_HOST=unix:///Users/pisey/.docker/run/docker.sock docker compose exec app php artisan tinker --execute='echo App\\\\Models\\\\BetTimeSetting::class . \" ok\";')",
+      "Bash(DOCKER_HOST=unix:///Users/pisey/.docker/run/docker.sock docker compose exec app php artisan db:seed --class=BetCategorySeeder --force)",
+      "Bash(DOCKER_HOST=unix:///Users/pisey/.docker/run/docker.sock docker compose exec app vendor/bin/pint app/Livewire/BetCategoryManager.php app/Models/BetCategory.php database/seeders/BetCategorySeeder.php routes/web.php)",
+      "Bash(DOCKER_HOST=unix:///Users/pisey/.docker/run/docker.sock docker compose exec app php artisan route:list --name=setting)",
+      "Bash(DOCKER_HOST=unix:///Users/pisey/.docker/run/docker.sock docker compose exec app vendor/bin/pint app/Livewire/BetTimeSettings.php app/Models/BetTimeSetting.php database/seeders/BetTimeSettingSeeder.php)",
+      "Bash(DOCKER_HOST=unix:///Users/pisey/.docker/run/docker.sock docker compose exec app vendor/bin/pint app/Livewire/BetTimeSettings.php app/Models/BetTimeSetting.php)",
+      "Bash(DOCKER_HOST=unix:///Users/pisey/.docker/run/docker.sock docker compose exec app vendor/bin/pint database/seeders/BetTimeSettingSeeder.php)"
     ],
     "additionalDirectories": [
       "/Users/pisey/Desktop/Lotto2026/.claude",

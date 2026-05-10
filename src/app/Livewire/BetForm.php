@@ -4,52 +4,75 @@ namespace App\Livewire;
 
 use App\DTOs\BetItemDTO;
 use App\Models\Bet;
+use App\Models\BetTimeSetting;
 use App\Models\Ticket;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 
 class BetForm extends Component
 {
-    public string $today   = '';
-    public string $session = 'morning';
-    public string $betType = 'ABCD';
-    public string $letter  = 'A';
-    public string $position = 'X';
-
-    public array  $bets          = [];
-    public ?int   $draftTicketId = null;
-    public ?string $flashSuccess = null;
+    public string  $today        = '';
+    public string  $session      = '';
+    public string  $betType      = 'ABCD';
+    public string  $letter       = 'A';
+    public string  $position     = 'X';
+    public array   $bets         = [];
+    public ?int    $draftTicketId = null;
+    public ?string $flashSuccess  = null;
+    public ?string $flashError    = null;
 
     public function mount(string $today = ''): void
     {
         $this->today = $today;
+
+        // Default to first active session
+        $first = BetTimeSetting::active()->first();
+        $this->session = $first ? $first->session_key : 'morning';
+
         $this->loadDraftBets();
+    }
+
+    #[Computed]
+    public function availableSessions(): \Illuminate\Support\Collection
+    {
+        return BetTimeSetting::active();
     }
 
     #[Computed]
     public function letters(): array
     {
-        return $this->session === 'noon'
-            ? ['A', 'B', 'C', 'D', 'F', 'I', 'N']
-            : ['A', 'B', 'C', 'D'];
+        $s = $this->availableSessions->firstWhere('session_key', $this->session);
+        if (!$s) {
+            return ['A', 'B', 'C', 'D'];
+        }
+        return $s->letters();
     }
 
     public function updatedSession(): void
     {
-        if ($this->session !== 'noon' && ! in_array($this->letter, ['A', 'B', 'C', 'D'])) {
-            $this->letter = 'A';
+        if (!in_array($this->letter, $this->letters())) {
+            $this->letter = $this->letters()[0] ?? 'A';
         }
+        $this->flashError = null;
         $this->loadDraftBets();
     }
 
     public function addBet(string $number, string $amount): void
     {
+        $this->flashError   = null;
+        $this->flashSuccess = null;
+
         if ($number === '' || $amount === '' || (float) $amount <= 0) {
             return;
         }
 
-        // Create draft ticket on first bet of this session
-        if (! $this->draftTicketId) {
+        $setting = $this->availableSessions->firstWhere('session_key', $this->session);
+        if ($setting && !$setting->isBetAllowed($this->letter, $this->betType)) {
+            $this->flashError = __('bet_closed');
+            return;
+        }
+
+        if (!$this->draftTicketId) {
             $ticket = Ticket::create([
                 'user_id'        => auth()->id(),
                 'session'        => $this->session,
@@ -71,7 +94,6 @@ class BetForm extends Component
         );
 
         $bet = Bet::create($dto->toModelArray($this->draftTicketId, auth()->id()));
-
         $this->syncTotalAmount();
 
         $this->bets[] = [
@@ -99,13 +121,23 @@ class BetForm extends Component
 
     public function submitBets(): void
     {
-        if (empty($this->bets) || ! $this->draftTicketId) {
+        if (empty($this->bets) || !$this->draftTicketId) {
             return;
         }
 
-        $totalAmount = collect($this->bets)->sum('amount');
+        // Re-validate cutoff at submit time
+        $setting = $this->availableSessions->firstWhere('session_key', $this->session);
+        if ($setting) {
+            foreach ($this->bets as $bet) {
+                if (!$setting->isBetAllowed($bet['letter'], $bet['bet_type'])) {
+                    $this->flashError = __('bet_closed');
+                    return;
+                }
+            }
+        }
 
-        $invoice = 'INV-' . now()->format('Ymd') . '-' . str_pad(
+        $totalAmount = collect($this->bets)->sum('amount');
+        $invoice     = 'INV-' . now()->format('Ymd') . '-' . str_pad(
             Ticket::whereDate('created_at', today())->where('status', '!=', 'draft')->count() + 1,
             4, '0', STR_PAD_LEFT
         );
@@ -119,16 +151,16 @@ class BetForm extends Component
         $this->bets          = [];
         $this->draftTicketId = null;
         $this->flashSuccess  = "Invoice {$invoice} submitted. Total: " . number_format($totalAmount);
+        $this->flashError    = null;
     }
 
-    public function render()
+    public function render(): \Illuminate\View\View
     {
         return view('livewire.bet-form', [
-            'letters' => $this->letters(),
+            'letters'           => $this->letters(),
+            'availableSessions' => $this->availableSessions,
         ]);
     }
-
-    // ── Private helpers ──────────────────────────────────────────
 
     private function loadDraftBets(): void
     {
@@ -159,7 +191,7 @@ class BetForm extends Component
 
     private function syncTotalAmount(): void
     {
-        if (! $this->draftTicketId) {
+        if (!$this->draftTicketId) {
             return;
         }
         Ticket::where('id', $this->draftTicketId)

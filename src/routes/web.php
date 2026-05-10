@@ -1,23 +1,25 @@
 <?php
 
+use App\Http\Controllers\AccountController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\RecordController;
-use App\Http\Controllers\ResultController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\ResultController;
 use App\Http\Controllers\SettingController;
-use App\Http\Controllers\AccountController;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 // Redirect root to login or home
 Route::get('/', fn () => redirect()->route('login'));
 
 // Locale switcher
-Route::post('/locale', function (\Illuminate\Http\Request $request) {
+Route::post('/locale', function (Request $request) {
     $request->validate(['locale' => 'required|in:en,km,vi,th']);
     session(['locale' => $request->locale]);
     if (auth()->check()) {
         auth()->user()->update(['locale' => $request->locale]);
     }
+
     return back();
 })->name('locale.set');
 
@@ -55,6 +57,12 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/setting', [SettingController::class, 'update'])
         ->middleware('role:admin,master')
         ->name('setting.update');
+    Route::get('/setting/bet_categories', fn () => view('admin.bet-categories'))
+        ->middleware('role:admin')
+        ->name('setting.bet_categories');
+    Route::get('/setting/bet_time_settings', fn () => view('admin.bet-time-settings'))
+        ->middleware('role:admin')
+        ->name('setting.bet_time_settings');
 
     // Account — all roles (scoped)
     Route::get('/account', [AccountController::class, 'index'])

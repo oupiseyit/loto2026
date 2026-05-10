@@ -86,5 +86,18 @@
     "pos": "ตำ.",
     "bet": "การแทง",
     "no_bets_found": "ไม่พบการแทง",
-    "loss": "แพ้"
+    "loss": "แพ้",
+    "bet_closed": "ปิดรับแทงสำหรับรอบนี้แล้ว",
+    "session_open": "เปิด",
+    "session_closing": "ใกล้ปิด",
+    "session_closed": "ปิดแล้ว",
+    "session_partial": "ปิดบางส่วน",
+    "bet_time_settings": "ตั้งค่าเวลาแทง",
+    "session_key": "รหัสรอบ",
+    "session_name": "ชื่อรอบ",
+    "result_time": "เวลาผลลัพธ์",
+    "cutoff_group1": "เวลาปิด (กลุ่ม 1)",
+    "cutoff_group2": "เวลาปิด (กลุ่ม 2)",
+    "add_session": "เพิ่มรอบ",
+    "no_sessions": "ยังไม่มีรอบที่กำหนด"
 }

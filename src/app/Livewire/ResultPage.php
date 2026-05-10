@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Models\BetTimeSetting;
 use App\Models\Result;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Computed;
@@ -12,20 +13,20 @@ class ResultPage extends Component
     public string $selectedDate;
     public string $selectedSession;
     public array  $results = [];
-    public bool $canEdit = false;
-
-    private const POSITIONS = [
-        'morning' => ['A', 'B', 'C', 'D'],
-        'noon'    => ['A', 'B', 'C', 'D', 'F', 'I', 'N'],
-        'evening' => ['A', 'B', 'C', 'D'],
-    ];
+    public bool   $canEdit = false;
 
     public function mount(string $selectedDate, string $selectedSession, array $grid, bool $canEdit = false): void
     {
         $this->selectedDate    = $selectedDate;
         $this->selectedSession = $selectedSession;
-        $this->results = $grid;
-        $this->canEdit = $canEdit;
+        $this->results         = $grid;
+        $this->canEdit         = $canEdit;
+    }
+
+    #[Computed]
+    public function availableSessions(): \Illuminate\Support\Collection
+    {
+        return BetTimeSetting::active();
     }
 
     public function updatedSelectedSession(): void
@@ -47,7 +48,7 @@ class ResultPage extends Component
 
     private function loadGrid(): void
     {
-        $positions = self::POSITIONS[$this->selectedSession] ?? self::POSITIONS['morning'];
+        $positions = $this->positionsForSession($this->selectedSession);
 
         $existing = Result::where('result_date', $this->selectedDate)
             ->where('session', $this->selectedSession)
@@ -55,7 +56,7 @@ class ResultPage extends Component
             ->get()
             ->keyBy('position');
 
-        $this->results = collect($positions)->map(function ($pos) use ($existing) {
+        $this->results = collect($positions)->map(function (string $pos) use ($existing): array {
             $row = $existing->get($pos);
             return [
                 'position' => $pos,
@@ -72,7 +73,7 @@ class ResultPage extends Component
             'results.*.number' => ['nullable', 'string', 'max:20'],
         ]);
 
-        DB::transaction(function () {
+        DB::transaction(function (): void {
             foreach ($this->results as $row) {
                 Result::updateOrCreate(
                     [
@@ -104,8 +105,17 @@ class ResultPage extends Component
             ->values();
     }
 
-    public function render()
+    public function render(): \Illuminate\View\View
     {
         return view('livewire.result-page');
+    }
+
+    private function positionsForSession(string $sessionKey): array
+    {
+        $setting = BetTimeSetting::active()->firstWhere('session_key', $sessionKey);
+        if (!$setting) {
+            return ['A', 'B', 'C', 'D'];
+        }
+        return $setting->letters();
     }
 }

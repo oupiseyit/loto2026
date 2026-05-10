@@ -86,5 +86,18 @@
     "pos": "Vị",
     "bet": "Cược",
     "no_bets_found": "Không có cược",
-    "loss": "Thua"
+    "loss": "Thua",
+    "bet_closed": "Đặt cược đã đóng cho phiên này",
+    "session_open": "Đang mở",
+    "session_closing": "Sắp đóng",
+    "session_closed": "Đã đóng",
+    "session_partial": "Đóng một phần",
+    "bet_time_settings": "Cài đặt giờ cược",
+    "session_key": "Mã phiên",
+    "session_name": "Tên phiên",
+    "result_time": "Giờ kết quả",
+    "cutoff_group1": "Giờ đóng (Nhóm 1)",
+    "cutoff_group2": "Giờ đóng (Nhóm 2)",
+    "add_session": "Thêm phiên",
+    "no_sessions": "Chưa có phiên nào"
 }

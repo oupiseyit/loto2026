@@ -1,11 +1,24 @@
 @php
-    $SESSIONS  = [['value'=>'morning','label'=>__('morning')],['value'=>'noon','label'=>__('noon')],['value'=>'evening','label'=>__('evening')]];
-    $POSITIONS = ['X','W','H','W*'];
-    $NUMPAD    = ['1','2','3','4','5','6','7','8','9','0','00','X'];
+    $NUMPAD      = ['1','2','3','4','5','6','7','8','9','0','00','X'];
     $totalAmount = collect($bets)->sum('amount');
+
+    $statusStyle = [
+        'open'         => 'color:#16a34a;border-color:#16a34a;',
+        'closing_soon' => 'color:#d97706;border-color:#d97706;',
+        'partial'      => 'color:#ea580c;border-color:#ea580c;',
+        'closed'       => 'color:#9ca3af;border-color:#d1d5db;',
+        'done'         => 'color:#9ca3af;border-color:#d1d5db;',
+    ];
+    $statusIcon = [
+        'open'         => '',
+        'closing_soon' => ' ⚡',
+        'partial'      => ' ⚠',
+        'closed'       => ' ✕',
+        'done'         => ' ✓',
+    ];
 @endphp
 
-<div x-data="{
+<div wire:poll.60000ms x-data="{
         number: '',
         amount: '',
         active: 'number',
@@ -33,15 +46,33 @@
         </div>
     @endif
 
-    {{-- Top bar: date + session --}}
+    {{-- Flash error (bet closed) --}}
+    @if ($flashError)
+        <div x-data="{ show: true }" x-show="show" x-init="setTimeout(()=>show=false,4000)"
+             class="mx-3 mt-2 px-4 py-2 rounded text-sm text-white bg-red-500">
+            {{ $flashError }}
+        </div>
+    @endif
+
+    {{-- Top bar: date + session tabs --}}
     <div class="flex items-center gap-2 px-3 py-2 bg-white border-b" style="border-color:#D4A017;">
         <span class="text-xs font-semibold" style="color:#DC143C;">{{ $today }}</span>
-        <div class="flex gap-1 ml-auto">
-            @foreach ($SESSIONS as $s)
-                <button wire:click="$set('session','{{ $s['value'] }}')" type="button"
+        <div class="flex gap-1 ml-auto flex-wrap">
+            @foreach ($availableSessions as $s)
+                @php
+                    $st        = $s->sessionStatus();
+                    $isActive  = $session === $s->session_key;
+                    $isClosed  = in_array($st, ['closed', 'done']);
+                    $btnStyle  = $isActive
+                        ? 'background-color:#DC143C;color:#fff;border-color:#DC143C;'
+                        : ($isClosed
+                            ? 'background-color:#f9fafb;' . ($statusStyle[$st] ?? '')
+                            : 'background-color:#fff;color:#DC143C;border-color:#DC143C;');
+                @endphp
+                <button wire:click="$set('session','{{ $s->session_key }}')" type="button"
                         class="px-2 py-1 text-xs font-bold rounded border transition-all"
-                        style="{{ $session === $s['value'] ? 'background-color:#DC143C;color:#fff;border-color:#DC143C;' : 'background-color:#fff;color:#DC143C;border-color:#DC143C;' }}">
-                    {{ $s['label'] }}
+                        style="{{ $btnStyle }}">
+                    {{ $s->session_name }}{{ $statusIcon[$st] ?? '' }}
                 </button>
             @endforeach
         </div>
@@ -119,7 +150,7 @@
                     <span>{{ __('letter') }}</span><span>{{ __('number') }}</span><span>{{ __('bet_type') }}</span><span>{{ __('total') }}</span><span>{{ __('position') }}</span>
                 </div>
                 @if (empty($bets))
-                    <p class="text-center text-xs text-gray-400 py-2">No bets yet</p>
+                    <p class="text-center text-xs text-gray-400 py-2">{{ __('no_bets_found') }}</p>
                 @else
                     @foreach ($bets as $idx => $bet)
                         <div wire:click="removeBet('{{ $bet['id'] }}')"
@@ -135,7 +166,6 @@
                 @endif
             </div>
 
-            {{-- Submit — sits just above the fixed panel border --}}
             <div class="px-2 py-1.5 bg-white">
                 <button wire:click="submitBets" type="button"
                         {{ empty($bets) ? 'disabled' : '' }}
@@ -151,13 +181,9 @@
     {{-- Mobile: fixed bottom panel (controls + numpad) --}}
     <div class="md:hidden fixed bottom-[57px] left-0 right-0 bg-white border-t z-20 flex flex-col"
          style="border-color:#D4A017;">
-
-        {{-- Controls --}}
         <div class="px-2 pt-1 pb-1 flex flex-col gap-1">
             @include('livewire.partials.bet-controls', ['compact' => true, 'hideNumpad' => true, 'letters' => $letters])
         </div>
-
-        {{-- Numpad --}}
         <div class="px-2 pb-2 grid grid-cols-3 gap-1">
             @foreach ($NUMPAD as $key)
                 @if ($key === 'X')

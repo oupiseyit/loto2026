@@ -108,7 +108,6 @@
                             ['route' => 'record',  'icon' => 'fas fa-book-open',      'label' => 'Records'],
                             ['route' => 'result',  'icon' => 'fas fa-trophy',         'label' => 'Results'],
                             ['route' => 'report',  'icon' => 'fas fa-chart-bar',      'label' => 'Reports'],
-                            ['route' => 'setting', 'icon' => 'fas fa-cogs',           'label' => 'Settings'],
                             ['route' => 'account', 'icon' => 'fas fa-user-circle',    'label' => 'Account'],
                         ];
                     @endphp
@@ -122,6 +121,41 @@
                         </a>
                     </li>
                     @endforeach
+
+                    {{-- Settings tree --}}
+                    <li class="nav-item {{ request()->routeIs('setting*') ? 'menu-open' : '' }}">
+                        <a href="{{ route('setting') }}"
+                           class="nav-link {{ request()->routeIs('setting*') ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-cogs"></i>
+                            <p>Settings <i class="right fas fa-angle-left"></i></p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="{{ route('setting') }}"
+                                   class="nav-link {{ request()->routeIs('setting') ? 'active' : '' }}"
+                                   style="padding-left:2.5rem;">
+                                    <i class="nav-icon fas fa-print"></i>
+                                    <p>Printer &amp; Commission</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('setting.bet_time_settings') }}"
+                                   class="nav-link {{ request()->routeIs('setting.bet_time_settings') ? 'active' : '' }}"
+                                   style="padding-left:2.5rem;">
+                                    <i class="nav-icon fas fa-clock"></i>
+                                    <p>Bet Time Settings</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('setting.bet_categories') }}"
+                                   class="nav-link {{ request()->routeIs('setting.bet_categories') ? 'active' : '' }}"
+                                   style="padding-left:2.5rem;">
+                                    <i class="nav-icon fas fa-tags"></i>
+                                    <p>Bet Categories</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
 
                 </ul>
             </nav>

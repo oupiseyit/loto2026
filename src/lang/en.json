@@ -86,5 +86,18 @@
     "pos": "Pos.",
     "bet": "Bet",
     "no_bets_found": "No bets found",
-    "loss": "Loss"
+    "loss": "Loss",
+    "bet_closed": "Betting is closed for this session",
+    "session_open": "Open",
+    "session_closing": "Closing soon",
+    "session_closed": "Closed",
+    "session_partial": "Partially closed",
+    "bet_time_settings": "Bet Time Settings",
+    "session_key": "Session Key",
+    "session_name": "Session Name",
+    "result_time": "Result Time",
+    "cutoff_group1": "Cutoff (Group 1)",
+    "cutoff_group2": "Cutoff (Group 2)",
+    "add_session": "Add Session",
+    "no_sessions": "No sessions configured"
 }

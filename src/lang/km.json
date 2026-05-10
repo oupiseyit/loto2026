@@ -86,5 +86,18 @@
     "pos": "ទី",
     "bet": "ភ្នាល់",
     "no_bets_found": "គ្មានការភ្នាល់",
-    "loss": "ចាញ់"
+    "loss": "ចាញ់",
+    "bet_closed": "ការភ្នាល់បិទសម្រាប់វេននេះ",
+    "session_open": "បើក",
+    "session_closing": "ជិតបិទ",
+    "session_closed": "បិទ",
+    "session_partial": "បិទដោយផ្នែក",
+    "bet_time_settings": "ការកំណត់ម៉ោងភ្នាល់",
+    "session_key": "សញ្ញា",
+    "session_name": "ឈ្មោះវេន",
+    "result_time": "ម៉ោងលទ្ធផល",
+    "cutoff_group1": "ម៉ោងបិទ (ក្រុម ១)",
+    "cutoff_group2": "ម៉ោងបិទ (ក្រុម ២)",
+    "add_session": "បន្ថែមវេន",
+    "no_sessions": "មិនមានវេនណាមួយ"
 }
