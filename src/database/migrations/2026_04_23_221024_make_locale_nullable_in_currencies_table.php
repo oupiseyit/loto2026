@@ -12,6 +12,7 @@ return new class extends Migration
 
     public function down(): void
     {
+        DB::statement("UPDATE currencies SET locale = 'en' WHERE locale IS NULL OR locale NOT IN ('en','km','vi','th')");
         DB::statement("ALTER TABLE currencies MODIFY COLUMN locale ENUM('en','km','vi','th') NOT NULL");
     }
 };

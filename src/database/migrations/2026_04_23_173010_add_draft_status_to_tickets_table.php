@@ -12,6 +12,7 @@ return new class extends Migration
 
     public function down(): void
     {
+        DB::statement("UPDATE tickets SET status = 'pending' WHERE status = 'draft'");
         DB::statement("ALTER TABLE tickets MODIFY COLUMN status ENUM('pending','won','lost') DEFAULT 'pending'");
     }
 };
