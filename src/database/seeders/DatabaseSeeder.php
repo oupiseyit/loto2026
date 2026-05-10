@@ -26,6 +26,8 @@ class DatabaseSeeder extends Seeder
             ResultSeeder::class,
             TicketSeeder::class,
             PayoutRecordSeeder::class,
+            BetCategorySeeder::class,   
+            BetTimeSettingSeeder::class,
         ]);
     }
 }

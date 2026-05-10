@@ -99,5 +99,16 @@
     "cutoff_group1": "เวลาปิด (กลุ่ม 1)",
     "cutoff_group2": "เวลาปิด (กลุ่ม 2)",
     "add_session": "เพิ่มรอบ",
-    "no_sessions": "ยังไม่มีรอบที่กำหนด"
+    "no_sessions": "ยังไม่มีรอบที่กำหนด",
+    "start_number": "เลขเริ่มต้น",
+    "end_number": "เลขสิ้นสุด",
+    "tail2_min_3_digits": "Tail 2 ต้องการตัวเลข 3 หลัก",
+    "number_required": "กรุณากรอกตัวเลข",
+    "amount_required": "กรุณากรอกจำนวนเงิน",
+    "invalid_end_number": "ตัวเลขสิ้นสุดอยู่นอกช่วง",
+    "bet_added": "เพิ่มการเดิมพันสำเร็จ",
+    "delete_confirm_msg": "คุณแน่ใจว่าต้องการลบรายการนี้?",
+    "cancel": "ยกเลิก",
+    "delete": "ลบ",
+    "record_deleted": "ลบรายการสำเร็จ"
 }

@@ -99,5 +99,16 @@
     "cutoff_group1": "ម៉ោងបិទ (ក្រុម ១)",
     "cutoff_group2": "ម៉ោងបិទ (ក្រុម ២)",
     "add_session": "បន្ថែមវេន",
-    "no_sessions": "មិនមានវេនណាមួយ"
+    "no_sessions": "មិនមានវេនណាមួយ",
+    "start_number": "លេខដំបូង",
+    "end_number": "លេខចុងក្រោយ",
+    "tail2_min_3_digits": "Tail 2 ត្រូវការលេខ 3 ខ្ទង់",
+    "number_required": "សូមបញ្ចូលលេខ",
+    "amount_required": "សូមបញ្ចូលចំនួនទឹកប្រាក់",
+    "invalid_end_number": "លេខបញ្ចប់មិនត្រឹមត្រូវ",
+    "bet_added": "បន្ថែមការភ្នាល់បានជោគជ័យ",
+    "delete_confirm_msg": "តើអ្នកប្រាកដជាចង់លុបកំណត់ត្រានេះ?",
+    "cancel": "បោះបង់",
+    "delete": "លុប",
+    "record_deleted": "លុបកំណត់ត្រាបានជោគជ័យ"
 }

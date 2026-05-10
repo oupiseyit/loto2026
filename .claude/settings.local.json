@@ -39,7 +39,13 @@
       "Bash(DOCKER_HOST=unix:///Users/pisey/.docker/run/docker.sock docker compose exec app php artisan route:list --name=setting)",
       "Bash(DOCKER_HOST=unix:///Users/pisey/.docker/run/docker.sock docker compose exec app vendor/bin/pint app/Livewire/BetTimeSettings.php app/Models/BetTimeSetting.php database/seeders/BetTimeSettingSeeder.php)",
       "Bash(DOCKER_HOST=unix:///Users/pisey/.docker/run/docker.sock docker compose exec app vendor/bin/pint app/Livewire/BetTimeSettings.php app/Models/BetTimeSetting.php)",
-      "Bash(DOCKER_HOST=unix:///Users/pisey/.docker/run/docker.sock docker compose exec app vendor/bin/pint database/seeders/BetTimeSettingSeeder.php)"
+      "Bash(DOCKER_HOST=unix:///Users/pisey/.docker/run/docker.sock docker compose exec app vendor/bin/pint database/seeders/BetTimeSettingSeeder.php)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost/home)",
+      "Bash(curl -s -w \"\\\\n%{http_code}\" http://localhost/home)",
+      "Bash(curl -s -w \"\\\\nHTTP:%{http_code}\" -H \"Host: mosquito-above-titmouse.ngrok-free.app\" -H \"X-Forwarded-Proto: https\" http://localhost/home)",
+      "Bash(curl -s -w \"\\\\nHTTP:%{http_code}\" -H \"Host: mosquito-above-titmouse.ngrok-free.app\" -H \"X-Forwarded-Proto: https\" http://localhost/login)",
+      "Bash(chmod +x /Users/pisey/Desktop/Lotto2026/capture-web.js)",
+      "Bash(npm init *)"
     ],
     "additionalDirectories": [
       "/Users/pisey/Desktop/Lotto2026/.claude",

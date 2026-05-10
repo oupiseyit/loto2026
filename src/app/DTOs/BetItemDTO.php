@@ -14,13 +14,7 @@ readonly class BetItemDTO
 
     public static function fromArray(array $data): self
     {
-        return new self(
-            betType:  $data['bet_type'],
-            letter:   $data['letter'],
-            position: $data['position'],
-            number:   $data['number'],
-            amount:   (float) $data['amount'],
-        );
+        return new self($data['bet_type'], $data['letter'], $data['position'], $data['number'], (float) $data['amount']);
     }
 
     public function toModelArray(int $ticketId, int $userId): array

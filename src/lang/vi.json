@@ -99,5 +99,16 @@
     "cutoff_group1": "Giờ đóng (Nhóm 1)",
     "cutoff_group2": "Giờ đóng (Nhóm 2)",
     "add_session": "Thêm phiên",
-    "no_sessions": "Chưa có phiên nào"
+    "no_sessions": "Chưa có phiên nào",
+    "start_number": "Số bắt đầu",
+    "end_number": "Số kết thúc",
+    "tail2_min_3_digits": "Tail 2 yêu cầu số bắt đầu 3 chữ số",
+    "number_required": "Vui lòng nhập số",
+    "amount_required": "Vui lòng nhập số tiền",
+    "invalid_end_number": "Số kết thúc nằm ngoài phạm vi",
+    "bet_added": "Thêm cược thành công",
+    "delete_confirm_msg": "Bạn có chắc muốn xóa bản ghi này không?",
+    "cancel": "Hủy",
+    "delete": "Xóa",
+    "record_deleted": "Xóa bản ghi thành công"
 }

@@ -11,26 +11,20 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class BetFactory extends Factory
 {
-    // Letters available per session
-    private const LETTERS = [
-        'morning' => ['A', 'B', 'C', 'D'],
-        'noon'    => ['A', 'B', 'C', 'D', 'F', 'I', 'N'],
-        'evening' => ['A', 'B', 'C', 'D'],
-    ];
-
-    private const POSITIONS  = ['X', 'W', 'H', 'W*'];
-    private const BET_TYPES  = ['ABCD', 'LO'];
+    private const LETTERS   = ['P1', 'P2', 'P3', 'P4', 'P5', 'P6', 'P7', 'P8', 'Lo23', 'Lo25', 'Lo27'];
+    private const POSITIONS = ['X', 'W', 'H', 'W*'];
+    private const BET_TYPES = ['P1', 'P2', 'P3', 'P4', 'P5', 'P6', 'P7', 'P8', 'Lo23', 'Lo25', 'Lo27'];
     private const AMOUNTS    = [1000, 2000, 3000, 5000, 10000];
 
     public function definition(): array
     {
         $ticket = Ticket::first() ?? Ticket::factory()->create();
-        $letter = fake()->randomElement(self::LETTERS[$ticket->session] ?? self::LETTERS['morning']);
+        $letter = fake()->randomElement(self::LETTERS);
 
         return [
             'ticket_id'  => $ticket->id,
             'user_id'    => $ticket->user_id,
-            'bet_type'   => fake()->randomElement(self::BET_TYPES),
+            'bet_type'   => $letter,
             'letter'     => $letter,
             'position'   => fake()->randomElement(self::POSITIONS),
             'number'     => str_pad(fake()->numberBetween(0, 99), 2, '0', STR_PAD_LEFT),
@@ -40,14 +34,15 @@ class BetFactory extends Factory
         ];
     }
 
-    /** Attach bet to a specific ticket (uses ticket session for valid letters) */
+    /** Attach bet to a specific ticket */
     public function forTicket(Ticket $ticket): static
     {
-        $letter = fake()->randomElement(self::LETTERS[$ticket->session] ?? self::LETTERS['morning']);
+        $letter = fake()->randomElement(self::LETTERS);
 
         return $this->state([
             'ticket_id' => $ticket->id,
             'user_id'   => $ticket->user_id,
+            'bet_type'  => $letter,
             'letter'    => $letter,
         ]);
     }
@@ -63,11 +58,11 @@ class BetFactory extends Factory
         });
     }
 
-    /** ABCD bet type */
-    public function abcd(): static { return $this->state(['bet_type' => 'ABCD']); }
+    /** P-type bet */
+    public function p(string $name = 'P1'): static { return $this->state(['bet_type' => $name, 'letter' => $name]); }
 
-    /** LO bet type */
-    public function lo(): static { return $this->state(['bet_type' => 'LO']); }
+    /** LO-type bet */
+    public function lo(string $name = 'Lo27'): static { return $this->state(['bet_type' => $name, 'letter' => $name]); }
 
     /** X-position bet */
     public function positionX(): static { return $this->state(['position' => 'X']); }

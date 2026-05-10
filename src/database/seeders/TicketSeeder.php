@@ -13,14 +13,8 @@ class TicketSeeder extends Seeder
 {
     private const SESSIONS = ['morning', 'noon', 'evening'];
 
-    private const LETTERS = [
-        'morning' => ['A', 'B', 'C', 'D'],
-        'noon'    => ['A', 'B', 'C', 'D', 'F', 'I', 'N'],
-        'evening' => ['A', 'B', 'C', 'D'],
-    ];
-
+    private const LETTERS   = ['P1', 'P2', 'P3', 'P4', 'P5', 'P6', 'P7', 'P8', 'Lo23', 'Lo25', 'Lo27'];
     private const POSITIONS = ['X', 'W', 'H', 'W*'];
-    private const BET_TYPES = ['ABCD', 'LO'];
     private const AMOUNTS   = [1000, 2000, 3000, 5000, 10000];
 
     public function run(): void
@@ -65,10 +59,8 @@ class TicketSeeder extends Seeder
                         $numBets     = rand(3, 6);
                         $totalAmount = 0;
                         $totalWin    = 0;
-                        $letters     = self::LETTERS[$session];
-
                         for ($b = 0; $b < $numBets; $b++) {
-                            $letter   = $letters[array_rand($letters)];
+                            $letter   = self::LETTERS[array_rand(self::LETTERS)];
                             $position = self::POSITIONS[array_rand(self::POSITIONS)];
                             $number   = str_pad(rand(0, 99), 2, '0', STR_PAD_LEFT);
                             $amount   = self::AMOUNTS[array_rand(self::AMOUNTS)];
@@ -82,7 +74,7 @@ class TicketSeeder extends Seeder
                             Bet::create([
                                 'ticket_id'  => $ticket->id,
                                 'user_id'    => $user->id,
-                                'bet_type'   => self::BET_TYPES[array_rand(self::BET_TYPES)],
+                                'bet_type'   => $letter,
                                 'letter'     => $letter,
                                 'position'   => $position,
                                 'number'     => $number,

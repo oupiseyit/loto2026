@@ -26,13 +26,19 @@ git pull origin "$BRANCH"
 # Create env from template only on first deploy
 if [[ ! -f "src/.env" ]]; then
   cp src/.env.example src/.env
+  echo "WARNING: src/.env created from example — fill in real values before continuing" >&2
+  exit 1
 fi
 
-# Build and restart app/web only
+# Build and restart app/web only (DB keeps running)
 docker compose -f docker-compose.prod.yml build app
 docker compose -f docker-compose.prod.yml up -d --no-deps app webserver
 
-# Apply non-destructive DB changes and cache optimizations
+# Install PHP dependencies (production only)
+docker compose -f docker-compose.prod.yml exec -T app \
+  composer install --no-dev --optimize-autoloader --no-interaction
+
+# Apply non-destructive DB changes and rebuild caches
 docker compose -f docker-compose.prod.yml exec -T app php artisan migrate --force
 docker compose -f docker-compose.prod.yml exec -T app php artisan config:cache
 docker compose -f docker-compose.prod.yml exec -T app php artisan route:cache

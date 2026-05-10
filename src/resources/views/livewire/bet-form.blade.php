@@ -20,23 +20,101 @@
 
 <div wire:poll.60000ms x-data="{
         number: '',
+        startNumber: '',
         amount: '',
         active: 'number',
         showBetList: true,
+        popupMessage: '',
+        showPopup: false,
+        betMode: $wire.entangle('betMode'),
+        endNumber: '',
+        showAlert(msg) { this.popupMessage = msg; this.showPopup = true; },
+        showConfirm: false,
+        confirmId: null,
+        confirmDelete(id) { this.confirmId = id; this.showConfirm = true; },
+        doDelete() { $wire.removeBet(this.confirmId); this.showConfirm = false; this.confirmId = null; },
+        toastMessage: '',
+        showToast: false,
+        toast(msg) { this.toastMessage = msg; this.showToast = true; setTimeout(() => { this.showToast = false; }, 2000); },
+        init() {
+            this.$watch('startNumber', (val) => {
+                if ((this.betMode === 2 || this.betMode === 5) && val !== '') {
+                    let s = parseInt(val);
+                    if (!isNaN(s)) {
+                        let units = s % 10;
+                        this.endNumber = this.betMode === 2
+                            ? (90  + units).toString().padStart(2, '0')
+                            : (990 + units).toString().padStart(3, '0');
+                    }
+                } else {
+                    this.endNumber = '';
+                }
+            });
+            this.$watch('betMode', () => { this.endNumber = ''; this.startNumber = ''; });
+        },
         numpad(key) {
-            if (key === 'X') { if (this.active==='number') this.number=''; else this.amount=''; return; }
-            if (this.active === 'number') this.number = (this.number + key).slice(0,10);
-            else this.amount = (this.amount + key).slice(0,10);
+            if (key === 'X') {
+                if (this.active === 'number')           this.number      = '';
+                else if (this.active === 'startNumber') this.startNumber = '';
+                else if (this.active === 'endNumber')   this.endNumber   = '';
+                else                                    this.amount      = '';
+                return;
+            }
+            if (this.active === 'number') {
+                this.number = (this.number + key).slice(0,3);
+            } else if (this.active === 'startNumber') {
+                let next = this.startNumber + key;
+                if (this.betMode === 3 && next.length > 2) { this.betMode = 4; this.startNumber = next.slice(0,3); }
+                else if (this.betMode === 2 || this.betMode === 3) { this.startNumber = next.slice(0,2); }
+                else { this.startNumber = next.slice(0,3); }
+            } else if (this.active === 'endNumber') {
+                let padLen = this.betMode === 5 ? 3 : 2;
+                let next = (this.endNumber + key).slice(0, padLen);
+                if (this.startNumber !== '' && next.length === padLen) {
+                    let units = parseInt(this.startNumber) % 10;
+                    let corrected = Math.floor(parseInt(next) / 10) * 10 + units;
+                    next = corrected.toString().padStart(padLen, '0');
+                }
+                this.endNumber = next;
+            } else {
+                this.amount = (this.amount + key).slice(0,10);
+            }
         },
         addBet() {
-            if (!this.number || !this.amount || parseFloat(this.amount) <= 0) return;
-            $wire.addBet(this.number, this.amount);
-            this.number = '';
-            this.amount = '';
-            this.active = 'number';
-            this.$nextTick(() => this.$refs.numberInput.focus());
+            if (this.betMode === 1) {
+                if (!this.number) { this.showAlert('{{ __("number_required") }}'); return; }
+                if (!this.amount || parseFloat(this.amount) <= 0) { this.showAlert('{{ __("amount_required") }}'); return; }
+                $wire.addBet(this.number, this.amount);
+            } else {
+                if (this.betMode === 4 && this.startNumber.length < 3) { this.showAlert('{{ __("tail2_min_3_digits") }}'); return; }
+                if (!this.startNumber) { this.showAlert('{{ __("number_required") }}'); return; }
+                if (this.betMode === 2 || this.betMode === 5) {
+                    let start = parseInt(this.startNumber);
+                    let end   = parseInt(this.endNumber);
+                    let units = start % 10;
+                    let maxEnd = this.betMode === 2 ? (90 + units) : (990 + units);
+                    if (!this.endNumber || isNaN(end) || end < start || end > maxEnd) {
+                        this.showAlert('{{ __("invalid_end_number") }}'); return;
+                    }
+                }
+                if (!this.amount || parseFloat(this.amount) <= 0) { this.showAlert('{{ __("amount_required") }}'); return; }
+                $wire.addRangeBet(this.startNumber, this.amount,
+                    (this.betMode === 2 || this.betMode === 5) ? this.endNumber : '');
+            }
         }
-     }">
+     }"
+     @bet-added.window="
+         toast('{{ __('bet_added') }}');
+         if (betMode === 1) {
+             number = ''; amount = ''; active = 'number';
+             $nextTick(() => $refs.numberInput && $refs.numberInput.focus());
+         } else {
+             startNumber = ''; endNumber = ''; amount = ''; active = 'startNumber';
+             $nextTick(() => $refs.startNumberInput && $refs.startNumberInput.focus());
+         }
+     "
+     @bet-closed.window="showAlert('{{ __('bet_closed') }}')"
+     @bet-removed.window="toast('{{ __('record_deleted') }}')">
 
     {{-- Flash success --}}
     @if ($flashSuccess)
@@ -70,9 +148,10 @@
                             : 'background-color:#fff;color:#DC143C;border-color:#DC143C;');
                 @endphp
                 <button wire:click="$set('session','{{ $s->session_key }}')" type="button"
-                        class="px-2 py-1 text-xs font-bold rounded border transition-all"
+                        class="px-2 py-1 text-xs font-bold rounded border transition-all leading-tight flex flex-col items-center"
                         style="{{ $btnStyle }}">
-                    {{ $s->session_name }}{{ $statusIcon[$st] ?? '' }}
+                    <span>{{ $s->session_name }}{{ $statusIcon[$st] ?? '' }}</span>
+                    <span class="font-normal opacity-80" style="font-size:10px;">{{ \Carbon\Carbon::parse($s->result_time)->format('H:i') }}</span>
                 </button>
             @endforeach
         </div>
@@ -96,7 +175,8 @@
                     </div>
                 @else
                     @foreach ($bets as $idx => $bet)
-                        <div wire:click="removeBet('{{ $bet['id'] }}')"
+                        <div wire:key="{{ $bet['id'] }}"
+                             @click="confirmDelete('{{ $bet['id'] }}')"
                              class="grid grid-cols-5 text-center text-base py-1.5 border-b cursor-pointer hover:opacity-70"
                              style="background-color:{{ $idx % 2 === 0 ? '#FFF8DC' : '#fff' }};border-color:#e5e7eb;">
                             <span class="font-medium">{{ $bet['letter'] }}</span>
@@ -153,7 +233,8 @@
                     <p class="text-center text-xs text-gray-400 py-2">{{ __('no_bets_found') }}</p>
                 @else
                     @foreach ($bets as $idx => $bet)
-                        <div wire:click="removeBet('{{ $bet['id'] }}')"
+                        <div wire:key="m-{{ $bet['id'] }}"
+                             @click="confirmDelete('{{ $bet['id'] }}')"
                              class="grid grid-cols-5 text-center text-sm py-1.5 border-b cursor-pointer hover:opacity-70"
                              style="background-color:{{ $idx % 2 === 0 ? '#FFF8DC' : '#fff' }};border-color:#e5e7eb;">
                             <span class="font-medium">{{ $bet['letter'] }}</span>
@@ -174,6 +255,67 @@
                     <span wire:loading.remove wire:target="submitBets">{{ __('submit') }}</span>
                     <span wire:loading wire:target="submitBets">{{ __('submitting') }}</span>
                 </button>
+            </div>
+        </div>
+    </div>
+
+    {{-- Success toast --}}
+    <div x-show="showToast" x-cloak
+         x-transition:enter="transition ease-out duration-200"
+         x-transition:enter-start="opacity-0 -translate-y-2"
+         x-transition:enter-end="opacity-100 translate-y-0"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         class="fixed top-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 px-5 py-3 rounded-xl text-white font-bold text-sm shadow-lg"
+         style="background-color:#16a34a;">
+        <svg class="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
+        </svg>
+        <span x-text="toastMessage"></span>
+    </div>
+
+    {{-- Alert popup --}}
+    <div x-show="showPopup" x-cloak
+         class="fixed inset-0 z-50 flex items-center justify-center"
+         style="background-color:rgba(0,0,0,0.45);">
+        <div class="bg-white rounded-2xl shadow-2xl mx-4 w-72 text-center overflow-hidden">
+            <div class="py-4 px-6" style="background-color:#DC143C;">
+                <svg class="mx-auto w-10 h-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+                </svg>
+            </div>
+            <div class="px-6 py-4">
+                <p class="font-bold text-base mb-4" style="color:#DC143C;" x-text="popupMessage"></p>
+                <button type="button" @click="showPopup=false"
+                        class="w-full py-2 rounded-lg text-white font-bold text-sm"
+                        style="background-color:#DC143C;">OK</button>
+            </div>
+        </div>
+    </div>
+
+    {{-- Confirm delete popup --}}
+    <div x-show="showConfirm" x-cloak
+         class="fixed inset-0 z-50 flex items-center justify-center"
+         style="background-color:rgba(0,0,0,0.45);">
+        <div class="bg-white rounded-2xl shadow-2xl mx-4 w-72 text-center overflow-hidden">
+            <div class="py-4 px-6" style="background-color:#D4A017;">
+                <svg class="mx-auto w-10 h-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                </svg>
+            </div>
+            <div class="px-6 py-4">
+                <p class="font-bold text-base mb-4" style="color:#374151;">{{ __('delete_confirm_msg') }}</p>
+                <div class="flex gap-2">
+                    <button type="button" @click="showConfirm=false"
+                            class="w-full py-2 rounded-lg font-bold text-sm border-2"
+                            style="border-color:#D4A017;color:#D4A017;background:#fff;">{{ __('cancel') }}</button>
+                    <button type="button" @click="doDelete()"
+                            class="w-full py-2 rounded-lg font-bold text-sm text-white"
+                            style="background-color:#DC143C;">{{ __('delete') }}</button>
+                </div>
             </div>
         </div>
     </div>
