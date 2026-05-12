@@ -18,33 +18,46 @@ fi
 
 echo "Deploying branch: $BRANCH"
 
-# Pull latest release code
+# ── 1. Pull latest code ────────────────────────────────────────────────────────
 git fetch origin
 git checkout "$BRANCH"
 git pull origin "$BRANCH"
 
-# Create env from template only on first deploy
+# ── 2. Guard: ensure src/.env exists ──────────────────────────────────────────
 if [[ ! -f "src/.env" ]]; then
   cp src/.env.example src/.env
-  echo "WARNING: src/.env created from example — fill in real values before continuing" >&2
+  echo "WARNING: src/.env created from .env.example — fill in real values before re-running" >&2
   exit 1
 fi
 
-# Build and restart app/web only (DB keeps running)
+# ── 3. Remove Vite dev-server hot file if present ─────────────────────────────
+rm -f src/public/hot
+
+# ── 4. Build frontend assets (Vite) in a temporary Node container ─────────────
+echo "Building frontend assets..."
+docker run --rm \
+  -v "$APP_DIR/src":/app \
+  -w /app \
+  node:20-alpine \
+  sh -c "npm ci --prefer-offline && npm run build"
+
+# ── 5. Build PHP image and restart app + webserver ────────────────────────────
 docker compose -f docker-compose.prod.yml build app
 docker compose -f docker-compose.prod.yml up -d --no-deps app webserver
 
-# Install PHP dependencies (production only)
+# ── 6. Install PHP dependencies (production only) ─────────────────────────────
 docker compose -f docker-compose.prod.yml exec -T app \
   composer install --no-dev --optimize-autoloader --no-interaction
 
-# Apply non-destructive DB changes and rebuild caches
+# ── 7. Apply non-destructive DB changes ───────────────────────────────────────
 docker compose -f docker-compose.prod.yml exec -T app php artisan migrate --force
+
+# ── 8. Rebuild Laravel caches ─────────────────────────────────────────────────
 docker compose -f docker-compose.prod.yml exec -T app php artisan config:cache
 docker compose -f docker-compose.prod.yml exec -T app php artisan route:cache
 docker compose -f docker-compose.prod.yml exec -T app php artisan view:cache
 
-# Ensure Laravel writable paths are correct
+# ── 9. Fix storage permissions ────────────────────────────────────────────────
 docker compose -f docker-compose.prod.yml exec -T app \
   chown -R www-data:www-data storage bootstrap/cache
 
