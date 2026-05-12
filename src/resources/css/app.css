@@ -4,14 +4,59 @@
 
 /* ── Theme tokens ─────────────────────────────────────────── */
 :root {
-    --ht-bg:          #f5f5f5;
-    --ht-card:        #ffffff;
-    --ht-surface:     #FFF8DC;
-    --ht-surface-alt: #ffffff;
-    --ht-text:        #374151;
-    --ht-text-muted:  #6b7280;
-    --ht-border:      #e5e7eb;
-    --ht-input-bg:    #ffffff;
+    --ht-bg:          #F9F3E8;
+    --ht-card:        #FFFDF7;
+    --ht-surface:     #F5EDDA;
+    --ht-surface-alt: #FFFDF7;
+    --ht-text:        #2C1F0E;
+    --ht-text-muted:  #7A6347;
+    --ht-border:      #E4D3B0;
+    --ht-input-bg:    #FFFDF7;
+    --ht-gold:        #C8922A;
+    --ht-crimson:     #B91C1C;
+}
+
+/* ── Luxury card component ────────────────────────────────── */
+.luxury-card {
+    background: var(--ht-card);
+    border: 1px solid var(--ht-border);
+    box-shadow: 0 0 0 3px var(--ht-card), 0 0 0 4px var(--ht-border);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.luxury-section-title {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-style: italic;
+    font-size: 1.05rem;
+    color: var(--ht-crimson);
+    letter-spacing: 0.02em;
+}
+
+.kpi-card {
+    background: var(--ht-card);
+    border: 1px solid var(--ht-border);
+    border-top: 3px solid var(--ht-gold);
+    border-radius: 6px;
+    padding: 0.6rem 0.5rem;
+    text-align: center;
+}
+
+.kpi-card .kpi-value {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: 1.2rem;
+    color: var(--ht-text);
+    line-height: 1.2;
+}
+
+.kpi-card .kpi-label {
+    font-size: 0.65rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--ht-text-muted);
+    margin-top: 2px;
 }
 
 /* Warm dark palette — complements gold/crimson brand */
@@ -36,8 +81,22 @@
 
 /* ── Dark: page wrappers ───────────────────────────────────── */
 [data-theme="dark"] [style*="background-color:#f5f5f5"],
-[data-theme="dark"] [style*="background-color: #f5f5f5"] {
+[data-theme="dark"] [style*="background-color: #f5f5f5"],
+[data-theme="dark"] [style*="background-color:#F9F3E8"],
+[data-theme="dark"] [style*="background-color: #F9F3E8"] {
     background-color: var(--ht-bg) !important;
+}
+
+/* ── Dark: luxury card backgrounds ───────────────────────── */
+[data-theme="dark"] .luxury-card,
+[data-theme="dark"] .kpi-card {
+    background-color: var(--ht-card) !important;
+    border-color: var(--ht-border) !important;
+    box-shadow: 0 0 0 3px var(--ht-card), 0 0 0 4px var(--ht-border) !important;
+}
+
+[data-theme="dark"] .kpi-card {
+    border-top-color: var(--ht-gold) !important;
 }
 
 /* white card backgrounds — with and without trailing semicolon */
@@ -54,7 +113,11 @@
 [data-theme="dark"] [style*="background-color: #FFF8DC"],
 [data-theme="dark"] [style*="background-color:#FFFACD"],
 [data-theme="dark"] [style*="background-color:#FFF5F5"],
-[data-theme="dark"] [style*="background-color:#FFFDE7"] {
+[data-theme="dark"] [style*="background-color:#FFFDE7"],
+[data-theme="dark"] [style*="background-color:#F5EDDA"],
+[data-theme="dark"] [style*="background-color: #F5EDDA"],
+[data-theme="dark"] [style*="background-color:#FFFDF7"],
+[data-theme="dark"] [style*="background-color: #FFFDF7"] {
     background-color: var(--ht-surface) !important;
 }
 

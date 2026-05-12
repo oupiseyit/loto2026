@@ -18,20 +18,21 @@
 
 <!-- Top Nav Bar -->
 <nav class="fixed top-0 left-0 right-0 z-40 flex items-center justify-between px-3 h-12 md:h-14"
-     style="background-color: #D4A017;">
+     style="background: linear-gradient(135deg, #C8922A 0%, #D4A017 50%, #E8B84B 100%); box-shadow: 0 2px 8px rgba(180,120,0,0.35);">
 
     <!-- Brand -->
     <div class="flex items-center gap-2">
-        <span class="text-white font-black text-lg leading-none">HT</span>
-        <span class="text-white/80 text-sm font-semibold">ភ្នាក់</span>
+        <span class="text-white font-black text-xl leading-none tracking-tight">HT</span>
+        <span class="text-white/40 text-base font-light select-none">◆</span>
+        <span class="text-white/90 text-sm font-semibold font-cormorant italic tracking-wide">ភ្នាក់</span>
     </div>
 
     <!-- Desktop: tab links -->
-    <div class="hidden md:flex items-center gap-1">
+    <div class="hidden md:flex items-center gap-0.5">
         @foreach ($visibleTabs as $tab)
             @php $isActive = $currentRoute === $tab['route']; @endphp
             <a href="{{ route($tab['route']) }}"
-               class="px-3 py-1.5 text-sm font-semibold rounded transition-colors {{ $isActive ? 'bg-white/20 text-white' : 'text-white/70 hover:text-white hover:bg-white/10' }}">
+               class="px-3.5 py-1 text-sm font-semibold rounded-full transition-all {{ $isActive ? 'bg-white/25 text-white shadow-sm' : 'text-white/65 hover:text-white hover:bg-white/15' }}">
                 {{ __(($tab['key'])) }}
             </a>
         @endforeach
@@ -113,7 +114,7 @@
 
 <!-- Mobile: Bottom Tab Bar -->
 <nav class="md:hidden fixed bottom-0 left-0 right-0 z-40 flex"
-     style="background-color: #D4A017; border-top: 2px solid #B8860B;">
+     style="background: linear-gradient(135deg, #C8922A 0%, #D4A017 50%, #E8B84B 100%); border-top: 1px solid rgba(255,255,255,0.2); box-shadow: 0 -2px 8px rgba(180,120,0,0.25);">
     @foreach ($visibleTabs as $tab)
         @php $isActive = $currentRoute === $tab['route']; @endphp
         <a href="{{ route($tab['route']) }}"

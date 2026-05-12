@@ -45,7 +45,9 @@
       "Bash(curl -s -w \"\\\\nHTTP:%{http_code}\" -H \"Host: mosquito-above-titmouse.ngrok-free.app\" -H \"X-Forwarded-Proto: https\" http://localhost/home)",
       "Bash(curl -s -w \"\\\\nHTTP:%{http_code}\" -H \"Host: mosquito-above-titmouse.ngrok-free.app\" -H \"X-Forwarded-Proto: https\" http://localhost/login)",
       "Bash(chmod +x /Users/pisey/Desktop/Lotto2026/capture-web.js)",
-      "Bash(npm init *)"
+      "Bash(npm init *)",
+      "Bash(python3 -c \"import sys,json; [print\\(x.get\\('Name',''\\),x.get\\('Service',''\\),x.get\\('Status',''\\)\\) for x in [json.loads\\(l\\) for l in sys.stdin if l.strip\\(\\)]]\")",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); m=d[0]['Mounts']; [print\\(x['Source'],'->', x['Destination']\\) for x in m]\")"
     ],
     "additionalDirectories": [
       "/Users/pisey/Desktop/Lotto2026/.claude",
