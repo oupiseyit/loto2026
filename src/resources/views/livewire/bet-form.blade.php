@@ -50,7 +50,11 @@
                     this.endNumber = '';
                 }
             });
-            this.$watch('betMode', () => { this.endNumber = ''; this.startNumber = ''; });
+            this.$watch('betMode', (newVal, oldVal) => {
+                this.endNumber = '';
+                // Don't clear startNumber on the auto-switch Tail(3)→Tail2(4) — the user was mid-typing
+                if (!(oldVal === 3 && newVal === 4)) { this.startNumber = ''; }
+            });
         },
         numpad(key) {
             if (key === 'X') {
@@ -64,16 +68,14 @@
                 this.number = (this.number + key).slice(0,3);
             } else if (this.active === 'startNumber') {
                 let next = this.startNumber + key;
-                if (this.betMode === 3 && next.length > 2) { this.betMode = 4; this.startNumber = next.slice(0,3); }
-                else if (this.betMode === 2 || this.betMode === 3) { this.startNumber = next.slice(0,2); }
+                if (this.betMode === 2) { this.startNumber = next.slice(0,2); }
                 else { this.startNumber = next.slice(0,3); }
             } else if (this.active === 'endNumber') {
-                let padLen = this.betMode === 5 ? 3 : 2;
-                let next = (this.endNumber + key).slice(0, padLen);
-                if (this.startNumber !== '' && next.length === padLen) {
+                let next = (this.endNumber + key).slice(0, 2);
+                if (this.startNumber !== '' && next.length === 2) {
                     let units = parseInt(this.startNumber) % 10;
                     let corrected = Math.floor(parseInt(next) / 10) * 10 + units;
-                    next = corrected.toString().padStart(padLen, '0');
+                    next = corrected.toString().padStart(2, '0');
                 }
                 this.endNumber = next;
             } else {
@@ -88,18 +90,18 @@
             } else {
                 if (this.betMode === 4 && this.startNumber.length < 3) { this.showAlert('{{ __("tail2_min_3_digits") }}'); return; }
                 if (!this.startNumber) { this.showAlert('{{ __("number_required") }}'); return; }
-                if (this.betMode === 2 || this.betMode === 5) {
+                if (this.betMode === 2) {
                     let start = parseInt(this.startNumber);
                     let end   = parseInt(this.endNumber);
                     let units = start % 10;
-                    let maxEnd = this.betMode === 2 ? (90 + units) : (990 + units);
+                    let maxEnd = 90 + units;
                     if (!this.endNumber || isNaN(end) || end < start || end > maxEnd) {
                         this.showAlert('{{ __("invalid_end_number") }}'); return;
                     }
                 }
                 if (!this.amount || parseFloat(this.amount) <= 0) { this.showAlert('{{ __("amount_required") }}'); return; }
                 $wire.addRangeBet(this.startNumber, this.amount,
-                    (this.betMode === 2 || this.betMode === 5) ? this.endNumber : '');
+                    this.betMode === 2 ? this.endNumber : '');
             }
         }
      }"
