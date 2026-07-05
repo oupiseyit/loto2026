@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HT ភ្នាក់ · PULSE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.5/dist/cdn.min.js"></script>
+<style>
+:root {
+  --bg: #04040E;
+  --s1: #07071A;
+  --s2: #0B0B22;
+  --s3: #0F0F2A;
+  --border: #14143A;
+  --cyan: #00E5FF;
+  --cyan-dim: rgba(0,229,255,0.12);
+  --cyan-glow: rgba(0,229,255,0.06);
+  --cyan-text: rgba(0,229,255,0.7);
+  --red: #FF2B55;
+  --red-dim: rgba(255,43,85,0.12);
+  --red-glow: 0 0 20px rgba(255,43,85,0.3);
+  --gold: #FFD700;
+  --gold-dim: rgba(255,215,0,0.1);
+  --purple: #7C3AED;
+  --purple-dim: rgba(124,58,237,0.15);
+  --text: #8B9DC3;
+  --text-bright: #C8D4F0;
+  --text-dim: #2A3560;
+  --font-d: 'Orbitron', sans-serif;
+  --font-b: 'Space Mono', monospace;
+  --glow-c: 0 0 16px rgba(0,229,255,0.25);
+  --glow-r: 0 0 16px rgba(255,43,85,0.25);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; }
+
+body {
+  background: var(--bg);
+  color: var(--text-bright);
+  font-family: var(--font-b);
+  font-size: 12px;
+  background-image:
+    radial-gradient(ellipse 60% 40% at 20% 100%, rgba(124,58,237,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 80% 0%, rgba(0,229,255,0.04) 0%, transparent 60%);
+}
+
+/* ── SCANLINES ── */
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 1000;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.08) 2px,
+    rgba(0,0,0,0.08) 4px
+  );
+  pointer-events: none;
+}
+
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border); }
+
+/* ── HEADER ── */
+.hdr {
+  height: 54px;
+  background: var(--s1);
+  border-bottom: 1px solid var(--cyan);
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  gap: 16px;
+  position: relative;
+  z-index: 5;
+  box-shadow: 0 0 24px rgba(0,229,255,0.08), inset 0 -1px 0 rgba(0,229,255,0.3);
+}
+.logo {
+  font-family: var(--font-d);
+  font-size: 15px;
+  font-weight: 900;
+  letter-spacing: 0.2em;
+  color: var(--cyan);
+  text-transform: uppercase;
+  text-shadow: 0 0 20px rgba(0,229,255,0.5), 0 0 40px rgba(0,229,255,0.2);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.logo-bracket { color: var(--red); opacity: 0.7; font-size: 20px; }
+.logo-km { font-family: var(--font-b); font-size: 11px; color: var(--text); font-weight: 400; opacity: 0.6; letter-spacing: 0.02em; }
+.sys-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  color: var(--text-dim);
+  letter-spacing: 0.08em;
+}
+.status-led {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: #00FF88;
+  box-shadow: 0 0 8px #00FF88, 0 0 16px rgba(0,255,136,0.4);
+  animation: pulse-led 2s ease-in-out infinite;
+}
+@keyframes pulse-led {
+  0%,100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+.session-wrap { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+.session-sel {
+  background: var(--s3);
+  border: 1px solid var(--cyan);
+  color: var(--cyan);
+  font-family: var(--font-d);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  padding: 6px 14px;
+  outline: none;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  box-shadow: var(--glow-c);
+  padding-right: 28px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5'%3E%3Cpath d='M0 0l4 5 4-5z' fill='%2300E5FF'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 8px;
+}
+
+/* ── LAYOUT ── */
+.layout {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  height: calc(100vh - 54px);
+}
+
+/* ── LEFT: BET LIST ── */
+.list-panel {
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--border);
+  overflow: hidden;
+}
+.list-head {
+  background: var(--s2);
+  border-bottom: 1px solid var(--border);
+  padding: 8px 16px;
+  display: grid;
+  grid-template-columns: 1.8rem 1fr 1fr 1fr 1fr 2rem;
+  font-family: var(--font-d);
+  font-size: 8px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--cyan-text);
+  text-align: center;
+  align-items: center;
+}
+.list-body { flex: 1; overflow-y: auto; }
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  opacity: 0.08;
+  pointer-events: none;
+  user-select: none;
+}
+.empty-logo {
+  font-family: var(--font-d);
+  font-size: 60px;
+  font-weight: 900;
+  color: var(--cyan);
+  letter-spacing: 0.3em;
+  text-shadow: 0 0 40px var(--cyan);
+}
+.empty-sub { font-size: 13px; color: var(--cyan); letter-spacing: 0.2em; margin-top: 8px; }
+
+.bet-row {
+  display: grid;
+  grid-template-columns: 1.8rem 1fr 1fr 1fr 1fr 2rem;
+  text-align: center;
+  align-items: center;
+  padding: 7px 16px;
+  border-bottom: 1px solid var(--border);
+  font-size: 11px;
+  transition: all 0.2s;
+  animation: row-in 0.3s ease;
+}
+@keyframes row-in {
+  from { opacity: 0; transform: translateX(10px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.bet-row:hover { background: var(--cyan-glow); }
+.bet-row .num {
+  font-family: var(--font-d);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 0.1em;
+  text-shadow: 0 0 12px rgba(255,215,0,0.4);
+}
+.bet-row .type { font-family: var(--font-d); font-size: 11px; color: var(--red); text-shadow: var(--glow-r); font-weight: 700; }
+.bet-row .sub { color: var(--cyan); font-weight: 700; text-shadow: var(--glow-c); }
+.bet-row .idx { color: var(--text-dim); font-size: 9px; }
+.del-btn {
+  width: 20px; height: 20px;
+  background: transparent;
+  border: 1px solid var(--text-dim);
+  color: var(--text-dim);
+  border-radius: 2px;
+  cursor: pointer;
+  font-size: 8px;
+  display: flex; align-items: center; justify-content: center;
+  margin: auto;
+  transition: all 0.15s;
+  font-family: var(--font-d);
+}
+.del-btn:hover { border-color: var(--red); color: var(--red); box-shadow: var(--glow-r); }
+
+/* ── LIST FOOTER ── */
+.list-footer {
+  border-top: 1px solid var(--cyan);
+  background: var(--s1);
+  padding: 12px 16px;
+  box-shadow: 0 -4px 24px rgba(0,229,255,0.06);
+}
+.total-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+.total-label { font-family: var(--font-d); font-size: 8px; letter-spacing: 0.2em; color: var(--text-dim); text-transform: uppercase; }
+.total-amt {
+  font-family: var(--font-d);
+  font-size: 20px;
+  font-weight: 900;
+  color: var(--cyan);
+  letter-spacing: 0.08em;
+  text-shadow: var(--glow-c);
+}
+.total-badge {
+  margin-left: auto;
+  background: var(--red-dim);
+  border: 1px solid var(--red);
+  color: var(--red);
+  font-family: var(--font-d);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  padding: 3px 8px;
+  box-shadow: var(--glow-r);
+}
+.submit-btn {
+  width: 100%;
+  background: var(--red);
+  border: none;
+  color: #fff;
+  font-family: var(--font-d);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+.submit-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.1) 50%, transparent 100%);
+  transform: translateX(-100%);
+  animation: sweep 3s ease-in-out infinite;
+}
+@keyframes sweep {
+  0% { transform: translateX(-100%); }
+  50%,100% { transform: translateX(100%); }
+}
+.submit-btn:hover:not(:disabled) { background: #ff0038; box-shadow: 0 0 24px rgba(255,43,85,0.5); }
+.submit-btn:disabled { opacity: 0.25; cursor: not-allowed; }
+
+/* ── RIGHT: INPUT ── */
+.input-panel {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--s1);
+  border-left: 1px solid var(--cyan-dim);
+}
+.input-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.sec-label {
+  font-family: var(--font-d);
+  font-size: 7px;
+  letter-spacing: 0.3em;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  margin-bottom: 5px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.sec-label::before { content: '//'; color: var(--cyan); opacity: 0.4; font-size: 9px; }
+
+/* LETTER BUTTONS */
+.letter-row { display: flex; gap: 5px; }
+.letter-btn {
+  flex: 1;
+  background: var(--s3);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: var(--font-d);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 8px 4px;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-transform: uppercase;
+}
+.letter-btn:hover { border-color: var(--cyan-dim); color: var(--cyan-text); }
+.letter-btn.active {
+  background: var(--cyan-dim);
+  border-color: var(--cyan);
+  color: var(--cyan);
+  box-shadow: var(--glow-c);
+}
+
+/* TYPE BUTTONS */
+.type-row { display: flex; gap: 5px; }
+.type-btn {
+  flex: 1;
+  background: var(--s3);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: var(--font-d);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 8px 4px;
+  cursor: pointer;
+  transition: all 0.15s;
+  letter-spacing: 0.04em;
+  position: relative;
+  overflow: hidden;
+}
+.type-btn::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--red);
+  transform: scaleX(0);
+  transition: transform 0.2s;
+}
+.type-btn:hover::after, .type-btn.active::after { transform: scaleX(1); }
+.type-btn:hover { color: var(--red); }
+.type-btn.active {
+  background: var(--red-dim);
+  border-color: var(--red);
+  color: var(--red);
+  box-shadow: var(--glow-r);
+}
+
+/* INPUTS */
+.input-wrap { position: relative; }
+.input-field {
+  width: 100%;
+  background: var(--s2);
+  border: 1px solid var(--border);
+  color: var(--gold);
+  font-family: var(--font-d);
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-align: center;
+  padding: 12px 8px;
+  outline: none;
+  transition: all 0.2s;
+  border-radius: 2px;
+}
+.input-field::placeholder { color: var(--text-dim); font-size: 13px; letter-spacing: 0.15em; font-weight: 400; }
+.input-field:focus, .input-field.active-field {
+  border-color: var(--gold);
+  background: rgba(255,215,0,0.04);
+  box-shadow: 0 0 16px rgba(255,215,0,0.12);
+  text-shadow: 0 0 20px rgba(255,215,0,0.5);
+}
+
+.dual-inputs { display: flex; gap: 6px; }
+.dual-inputs .input-field { font-size: 22px; }
+
+.amount-field { font-size: 32px; color: var(--red); }
+.amount-field:focus, .amount-field.active-field {
+  border-color: var(--red);
+  background: rgba(255,43,85,0.04);
+  box-shadow: var(--glow-r);
+  color: var(--red);
+  text-shadow: 0 0 20px rgba(255,43,85,0.5);
+}
+
+/* BREAKDOWN */
+.breakdown-wrap {
+  border: 1px solid var(--cyan);
+  background: var(--s2);
+  max-height: 11rem;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: var(--glow-c);
+}
+.breakdown-rows { overflow-y: auto; flex: 1; }
+.breakdown-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 10px;
+  border-bottom: 1px solid var(--border);
+  font-size: 10px;
+  color: var(--text);
+  font-family: var(--font-b);
+}
+.breakdown-num { color: var(--gold); font-weight: 700; font-family: var(--font-d); font-size: 11px; letter-spacing: 0.1em; }
+.breakdown-footer {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 10px;
+  background: var(--cyan-dim);
+  border-top: 1px solid var(--cyan);
+  flex-shrink: 0;
+}
+.breakdown-footer span { font-family: var(--font-d); font-size: 10px; letter-spacing: 0.12em; color: var(--cyan); font-weight: 700; }
+
+/* NUMPAD */
+.numpad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+  gap: 4px;
+  flex: 1;
+  min-height: 190px;
+}
+.num-key {
+  background: var(--s3);
+  border: 1px solid var(--border);
+  color: var(--text-bright);
+  font-family: var(--font-d);
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.1s;
+  letter-spacing: 0.04em;
+  user-select: none;
+  position: relative;
+  overflow: hidden;
+}
+.num-key::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 120%, rgba(0,229,255,0.15) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.num-key:hover::before { opacity: 1; }
+.num-key:hover { border-color: var(--cyan); color: var(--cyan); box-shadow: var(--glow-c); }
+.num-key:active { transform: scale(0.93); }
+.num-key.del-key { color: var(--red); font-size: 16px; letter-spacing: 0; }
+.num-key.del-key::before { background: radial-gradient(circle at 50% 120%, rgba(255,43,85,0.15) 0%, transparent 70%); }
+.num-key.del-key:hover { border-color: var(--red); color: var(--red); box-shadow: var(--glow-r); }
+
+/* BOTTOM */
+.input-bottom { padding: 10px 14px; border-top: 1px solid var(--border); }
+.add-btn {
+  width: 100%;
+  background: var(--cyan-dim);
+  border: 1px solid var(--cyan);
+  color: var(--cyan);
+  font-family: var(--font-d);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: var(--glow-c);
+}
+.add-btn:hover { background: rgba(0,229,255,0.2); box-shadow: 0 0 30px rgba(0,229,255,0.25); }
+
+/* MODAL */
+.overlay {
+  position: fixed; inset: 0; z-index: 100;
+  background: rgba(0,0,0,0.8);
+  display: flex; align-items: center; justify-content: center;
+  backdrop-filter: blur(4px);
+}
+.modal {
+  background: var(--s2);
+  border: 1px solid var(--red);
+  width: 300px;
+  overflow: hidden;
+  box-shadow: 0 0 40px rgba(255,43,85,0.3);
+}
+.modal-head {
+  background: var(--red-dim);
+  border-bottom: 1px solid var(--red);
+  padding: 18px;
+  display: flex; align-items: center; justify-content: center;
+}
+.modal-icon { color: var(--red); font-family: var(--font-d); font-size: 28px; font-weight: 900; text-shadow: var(--glow-r); }
+.modal-body { padding: 16px; text-align: center; }
+.modal-msg { font-family: var(--font-d); font-size: 11px; letter-spacing: 0.06em; color: var(--text-bright); margin-bottom: 14px; line-height: 1.7; }
+.modal-actions { display: flex; gap: 6px; }
+.modal-cancel, .modal-confirm, .modal-ok {
+  flex: 1; padding: 9px;
+  font-family: var(--font-d);
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  cursor: pointer;
+  border-radius: 2px;
+  font-weight: 700;
+  transition: all 0.2s;
+}
+.modal-cancel { background: transparent; border: 1px solid var(--border); color: var(--text); }
+.modal-cancel:hover { border-color: var(--text); color: var(--text-bright); }
+.modal-confirm, .modal-ok { background: var(--red); border: 1px solid var(--red); color: #fff; width: 100%; }
+.modal-confirm:hover, .modal-ok:hover { background: #ff0038; box-shadow: var(--glow-r); }
+
+/* TICKER BAR */
+.ticker {
+  position: fixed; bottom: 0; left: 0; right: 0; height: 20px;
+  background: var(--s1);
+  border-top: 1px solid var(--border);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  z-index: 5;
+}
+.ticker-inner {
+  display: flex;
+  gap: 60px;
+  white-space: nowrap;
+  animation: ticker 30s linear infinite;
+  font-family: var(--font-d);
+  font-size: 8px;
+  letter-spacing: 0.15em;
+  color: var(--text-dim);
+}
+.ticker-item span { color: var(--cyan-text); }
+@keyframes ticker {
+  from { transform: translateX(100vw); }
+  to   { transform: translateX(-100%); }
+}
+</style>
+</head>
+<body x-data="{
+  betMode: 1,
+  letter: '5A',
+  letters: ['5A','5B','5C','2A','2B'],
+  number: '',
+  startNumber: '',
+  endNumber: '',
+  amount: '',
+  active: 'number',
+  bets: [],
+  nextId: 1,
+  session: 'morning',
+  showConfirm: false,
+  confirmId: null,
+  showPopup: false,
+  popupMessage: '',
+
+  get totalAmount() { return this.bets.reduce((s,b)=>s+b.subtotal,0); },
+
+  init() {
+    this.$watch('startNumber', val => {
+      if (!val||this.betMode===1||this.betMode===5){this.endNumber='';return;}
+      const s=parseInt(val);
+      if (isNaN(s)){this.endNumber='';return;}
+      if (this.betMode===2) {
+        const u=s%10;
+        this.endNumber=val.length<=2?(90+u).toString().padStart(2,'0'):(900+(s%100)).toString().padStart(3,'0');
+      } else if (this.betMode===3&&val.length===3) {
+        this.endNumber=(Math.floor(s/100)*100+90+s%10).toString().padStart(3,'0');
+      } else if (this.betMode===4) {
+        this.endNumber=(Math.floor(s/10)*10+9).toString().padStart(val.length,'0');
+      } else { this.endNumber=''; }
+    });
+    this.$watch('betMode',(n,o)=>{this.endNumber='';if(!(o===3&&n===4))this.startNumber='';});
+  },
+
+  posMultiplier() {
+    const m=parseInt((this.letter||'').replace(/[^0-9]/g,''));
+    return (isNaN(m)||m<=0)?1:m;
+  },
+
+  betBreakdown() {
+    const amt=parseFloat(this.amount);
+    if (!amt||amt<=0)return null;
+    const mul=this.posMultiplier();
+    if (this.betMode===1){if(!this.number)return null;return{rows:[{num:this.number,amt,rowTotal:amt*mul}],total:amt*mul};}
+    if (this.betMode===5){
+      if (this.startNumber.length!==3)return null;
+      const digits=this.startNumber.split(''),perms=[],seen=new Set();
+      const go=(rem,cur)=>{
+        if(!rem.length){const k=cur.join('');if(!seen.has(k)){seen.add(k);perms.push(k);}return;}
+        const used=new Set();
+        rem.forEach((d,i)=>{if(used.has(d))return;used.add(d);const nx=[...rem];nx.splice(i,1);go(nx,[...cur,d]);});
+      };
+      go(digits,[]);
+      if(!perms.length)return null;
+      return{rows:perms.map(p=>({num:p,amt,rowTotal:amt*mul})),total:amt*mul*perms.length};
+    }
+    if(!this.startNumber||!this.endNumber)return null;
+    const start=parseInt(this.startNumber),end=parseInt(this.endNumber);
+    if(isNaN(start)||isNaN(end)||end<start)return null;
+    const step=this.betMode===2?(this.startNumber.length<=2?10:100):this.betMode===3?10:1;
+    const padLen=this.startNumber.length,rows=[];
+    for(let n=start;n<=end;n+=step)rows.push({num:n.toString().padStart(padLen,'0'),amt,rowTotal:amt*mul});
+    if(!rows.length)return null;
+    return{rows,total:amt*mul*rows.length};
+  },
+
+  numpad(key) {
+    if(key==='X'){
+      if(this.active==='number')this.number='';
+      else if(this.active==='startNumber')this.startNumber='';
+      else if(this.active==='endNumber')this.endNumber='';
+      else this.amount='';
+      return;
+    }
+    if(this.active==='number')this.number=(this.number+key).slice(0,3);
+    else if(this.active==='startNumber'){const nx=this.startNumber+key;this.startNumber=this.betMode===2?nx.slice(0,2):nx.slice(0,3);}
+    else if(this.active==='endNumber'){const ml=this.betMode===3?3:(this.startNumber.length||3);this.endNumber=(this.endNumber+key).slice(0,ml);}
+    else this.amount=(this.amount+key).slice(0,10);
+  },
+
+  addBet() {
+    const av=parseFloat(this.amount);
+    if(!this.amount||av<100){this.popupMessage='[ERROR] Amount must be ≥ 100';this.showPopup=true;return;}
+    if(av%100!==0){this.popupMessage='[ERROR] Amount must be multiple of 100';this.showPopup=true;return;}
+    const bd=this.betBreakdown();
+    if(!bd){this.popupMessage='[ERROR] Invalid number input';this.showPopup=true;return;}
+    const labels={1:'Normal',2:'<',3:'=',4:'>',5:'X'};
+    const displayNum=this.betMode===1?this.number:this.betMode===5?this.startNumber:`${this.startNumber}→${this.endNumber}`;
+    this.bets.push({id:this.nextId++,number:displayNum,amount:av,bet_type:labels[this.betMode],letter:this.letter,subtotal:bd.total});
+    if(this.betMode===1){this.number='';this.amount='';this.active='number';}
+    else{this.startNumber='';this.endNumber='';this.amount='';this.active='startNumber';}
+  },
+
+  formatAmt(v){if(!v)return'';const n=parseInt(v);return isNaN(n)?'':n.toLocaleString('en-US');}
+}">
+
+<!-- HEADER -->
+<header class="hdr">
+  <div class="logo">
+    <span class="logo-bracket">[</span>
+    HT
+    <span class="logo-km">ភ្នាក់</span>
+    <span class="logo-bracket">]</span>
+  </div>
+  <div class="sys-status">
+    <span class="status-led"></span>
+    <span>SYS ONLINE</span>
+  </div>
+  <div style="font-family:var(--font-d);font-size:9px;color:var(--text-dim);letter-spacing:0.15em;">2026.06.08</div>
+  <div class="session-wrap">
+    <select class="session-sel" x-model="session">
+      <option value="morning">▶ ព្រឹក 11:00 [OPEN]</option>
+      <option value="noon">▶ ថ្ងៃ 14:00 [OPEN]</option>
+      <option value="evening">◐ ល្ងាច 17:00 [⚡CLOSING]</option>
+    </select>
+  </div>
+</header>
+
+<!-- LAYOUT -->
+<div class="layout">
+
+  <!-- LEFT -->
+  <div class="list-panel">
+    <div class="list-head">
+      <span>#</span><span>NUMBER</span><span>AMOUNT</span><span>TYPE</span><span>SUBTOTAL</span><span></span>
+    </div>
+    <div class="list-body">
+      <template x-if="bets.length===0">
+        <div class="empty-state">
+          <div class="empty-logo">HT</div>
+          <div class="empty-sub">NO BETS PLACED</div>
+        </div>
+      </template>
+      <template x-for="(bet,idx) in bets" :key="bet.id">
+        <div class="bet-row">
+          <span class="idx" x-text="(idx+1).toString().padStart(2,'0')"></span>
+          <span class="num" x-text="bet.number"></span>
+          <span x-text="bet.amount.toLocaleString()"></span>
+          <span class="type" x-text="bet.bet_type"></span>
+          <span class="sub" x-text="bet.subtotal.toLocaleString()"></span>
+          <button class="del-btn" @click="confirmId=bet.id;showConfirm=true">✕</button>
+        </div>
+      </template>
+    </div>
+    <div class="list-footer">
+      <div class="total-row">
+        <span class="total-label">Total</span>
+        <span class="total-amt" x-text="totalAmount.toLocaleString()"></span>
+        <span class="total-badge" x-text="bets.length+'R'"></span>
+      </div>
+      <button class="submit-btn" :disabled="bets.length===0"
+        @click="if(bets.length>0){bets=[];popupMessage='[OK] Bets transmitted successfully';showPopup=true;}">
+        ▶▶ SUBMIT BETS
+      </button>
+    </div>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="input-panel">
+    <div class="input-scroll">
+      <div>
+        <div class="sec-label">Position Group</div>
+        <div class="letter-row">
+          <template x-for="l in letters" :key="l">
+            <button class="letter-btn" :class="letter===l?'active':''" @click="letter=l" x-text="l"></button>
+          </template>
+        </div>
+      </div>
+
+      <div>
+        <div class="sec-label">Bet Mode</div>
+        <div class="type-row">
+          <template x-for="[m,lbl] in [[1,'NRM'],[2,'‹'],[3,'='],[4,'›'],[5,'×N']]" :key="m">
+            <button class="type-btn" :class="betMode===m?'active':''" @click="betMode=m" x-text="lbl"></button>
+          </template>
+        </div>
+      </div>
+
+      <div x-show="betMode===1">
+        <div class="sec-label">Number Input</div>
+        <input class="input-field" :class="active==='number'?'active-field':''"
+          type="text" inputmode="numeric" x-model="number"
+          @focus="active='number'"
+          @input="number=number.replace(/[^0-9]/g,'').slice(0,3)"
+          placeholder="_ _ _">
+      </div>
+      <div x-show="betMode===2||betMode===3||betMode===4">
+        <div class="sec-label">Range Input</div>
+        <div class="dual-inputs">
+          <input class="input-field" :class="active==='startNumber'?'active-field':''"
+            type="text" inputmode="numeric" x-model="startNumber"
+            @focus="active='startNumber'"
+            @input="startNumber=startNumber.replace(/[^0-9]/g,'').slice(0,3)"
+            placeholder="FROM">
+          <input class="input-field" :class="active==='endNumber'?'active-field':''"
+            type="text" inputmode="numeric" x-model="endNumber"
+            @focus="active='endNumber'"
+            @input="endNumber=endNumber.replace(/[^0-9]/g,'').slice(0,startNumber.length||3)"
+            placeholder="TO">
+        </div>
+      </div>
+      <div x-show="betMode===5">
+        <div class="sec-label">Permutation Base</div>
+        <input class="input-field" :class="active==='startNumber'?'active-field':''"
+          type="text" inputmode="numeric" x-model="startNumber"
+          @focus="active='startNumber'"
+          @input="startNumber=startNumber.replace(/[^0-9]/g,'').slice(0,3)"
+          placeholder="_ _ _">
+      </div>
+
+      <div>
+        <div class="sec-label">Stake Amount</div>
+        <input class="input-field amount-field" :class="active==='amount'?'active-field':''"
+          type="text" inputmode="numeric"
+          :value="formatAmt(amount)"
+          @focus="active='amount'"
+          @input="amount=$event.target.value.replace(/[^0-9]/g,'').slice(0,10)"
+          @blur="if(amount){let n=Math.round(parseInt(amount)/100)*100;amount=(n>=100?n:100).toString();}"
+          @keydown.enter="addBet()"
+          placeholder="0">
+      </div>
+
+      <div x-show="betBreakdown()!==null" x-cloak>
+        <div class="sec-label">Breakdown Preview</div>
+        <div class="breakdown-wrap">
+          <div class="breakdown-rows">
+            <template x-for="(row,idx) in (betBreakdown()||{rows:[]}).rows" :key="idx">
+              <div class="breakdown-row">
+                <span class="breakdown-num" x-text="(idx+1).toString().padStart(2,'0')+' '+row.num"></span>
+                <span x-text="row.amt.toLocaleString()+' × '+posMultiplier()+'('+letter+') = '+row.rowTotal.toLocaleString()"></span>
+              </div>
+            </template>
+          </div>
+          <div class="breakdown-footer">
+            <span>SUBTOTAL</span>
+            <span x-text="(betBreakdown()||{total:0}).total.toLocaleString()"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="numpad" style="min-height:200px;">
+        <template x-for="key in ['1','2','3','4','5','6','7','8','9','0','00','X']" :key="key">
+          <button class="num-key" :class="key==='X'?'del-key':''" @click="numpad(key)" x-text="key"></button>
+        </template>
+      </div>
+    </div>
+
+    <div class="input-bottom">
+      <button class="add-btn" @click="addBet()">▶ ADD BET TO QUEUE</button>
+    </div>
+  </div>
+</div>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-inner">
+    <span>HT ភ្នាក់ LOTTERY SYSTEM</span>
+    <span>ព្រឹក <span>11:00 OPEN</span></span>
+    <span>ថ្ងៃ <span>14:00 OPEN</span></span>
+    <span>ល្ងាច <span>17:00 ⚡ CLOSING SOON</span></span>
+    <span>MIN BET: <span>100</span></span>
+    <span>MULTIPLES OF: <span>100</span></span>
+    <span>HT ភ្នាក់ LOTTERY SYSTEM</span>
+  </div>
+</div>
+
+<!-- MODALS -->
+<div class="overlay" x-show="showConfirm" x-cloak @click.self="showConfirm=false">
+  <div class="modal">
+    <div class="modal-head"><span class="modal-icon">⚠</span></div>
+    <div class="modal-body">
+      <p class="modal-msg">CONFIRM DELETE OPERATION?</p>
+      <div class="modal-actions">
+        <button class="modal-cancel" @click="showConfirm=false">CANCEL</button>
+        <button class="modal-confirm" @click="bets=bets.filter(b=>b.id!==confirmId);showConfirm=false">EXECUTE</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="overlay" x-show="showPopup" x-cloak @click.self="showPopup=false">
+  <div class="modal">
+    <div class="modal-head"><span class="modal-icon">!</span></div>
+    <div class="modal-body">
+      <p class="modal-msg" x-text="popupMessage"></p>
+      <button class="modal-ok" @click="showPopup=false">ACK</button>
+    </div>
+  </div>
+</div>
+</body>
+</html>

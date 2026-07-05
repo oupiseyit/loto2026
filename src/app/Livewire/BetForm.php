@@ -21,7 +21,7 @@ class BetForm extends Component
 
     public string $position = 'X';
 
-    public int $betMode = 1;  // 1=Normal 2=Head 3=Tail 4=Tail2 5=Head2
+    public int $betMode = 1;  // 1=Normal 2=Head< 3=Middle= 4=Tail> 5=MultipleX
 
     public array $bets = [];
 
@@ -35,8 +35,10 @@ class BetForm extends Component
     {
         $this->today = $today;
 
-        // Default to first active session
-        $first = BetTimeSetting::active()->first();
+        // Auto-select first session that is still open for betting
+        $sessions = BetTimeSetting::active();
+        $first = $sessions->first(fn ($s) => ! in_array($s->sessionStatus(), ['closed', 'done']))
+            ?? $sessions->first();
         $this->session = $first ? $first->session_key : 'morning';
         $this->letter = ($first->group_type ?? [])[0] ?? '';
 
@@ -129,6 +131,13 @@ class BetForm extends Component
                 ->where('user_id', auth()->id())
                 ->whereIn('number', $numbers)
                 ->delete();
+        } elseif (str_starts_with($id, 'perm_')) {
+            // ID format: perm_{num1}_{num2}_{num3}...
+            $numbers = explode('_', substr($id, 5));
+            Bet::where('ticket_id', $this->draftTicketId)
+                ->where('user_id', auth()->id())
+                ->whereIn('number', $numbers)
+                ->delete();
         } else {
             Bet::where('id', (int) $id)->where('user_id', auth()->id())->delete();
         }
@@ -159,31 +168,6 @@ class BetForm extends Component
             return;
         }
 
-        $start = (int) $startNumber;
-        if ($this->betMode === 2) {
-            // Head: same units digit, step through decades; end is user-editable
-            $maxEnd = 90 + ($start % 10);
-            $end = $endNumber !== '' ? min((int) $endNumber, $maxEnd) : $maxEnd;
-            $step = 10;
-            $padLen = 2;
-        } elseif ($this->betMode === 3) {
-            // Tail: consecutive within same decade (X0–X9)
-            $end = (int) floor($start / 10) * 10 + 9;
-            $step = 1;
-            $padLen = 2;
-        } elseif ($this->betMode === 4) {
-            // Tail 2: consecutive within same century (X00–X99)
-            $end = (int) floor($start / 100) * 100 + 99;
-            $step = 1;
-            $padLen = 3;
-        } else {
-            // Head 2: same units digit, step through 3-digit decades; end is user-editable
-            $maxEnd = 990 + ($start % 10);
-            $end = $endNumber !== '' ? min((int) $endNumber, $maxEnd) : $maxEnd;
-            $step = 10;
-            $padLen = 3;
-        }
-
         if (! $this->draftTicketId) {
             $ticket = Ticket::create([
                 'user_id' => auth()->id(),
@@ -195,6 +179,69 @@ class BetForm extends Component
                 'win_amount' => 0,
             ]);
             $this->draftTicketId = $ticket->id;
+        }
+
+        if ($this->betMode === 5) {
+            // Multiple (X): all unique permutations of the 3 input digits
+            $padded = str_pad($startNumber, 3, '0', STR_PAD_LEFT);
+            $perms = $this->uniquePermutations(str_split($padded));
+            $now = now();
+            $numbers = [];
+            $rows = [];
+            foreach ($perms as $perm) {
+                $num = implode('', $perm);
+                $numbers[] = $num;
+                $rows[] = [
+                    'ticket_id' => $this->draftTicketId,
+                    'user_id' => auth()->id(),
+                    'bet_type' => $betType,
+                    'letter' => $this->letter,
+                    'position' => $this->position,
+                    'number' => $num,
+                    'amount' => (float) $amount,
+                    'is_winner' => false,
+                    'win_amount' => 0,
+                    'created_at' => $now,
+                    'updated_at' => $now,
+                ];
+            }
+            Bet::insert($rows);
+            $this->syncTotalAmount();
+            $count = count($numbers);
+            $this->bets[] = [
+                'id' => 'perm_'.implode('_', $numbers),
+                'bet_type' => $betType,
+                'letter' => $this->letter,
+                'position' => $this->position,
+                'number' => $padded.' X '.$count,
+                'amount' => (float) $amount * $count,
+            ];
+            $this->dispatch('bet-added');
+
+            return;
+        }
+
+        $start = (int) $startNumber;
+        $len = strlen($startNumber);
+
+        if ($this->betMode === 2) {
+            // Head (<): first digit → 9, remaining digits fixed
+            $step = $len <= 2 ? 10 : 100;
+            $autoEnd = $len <= 2 ? 90 + ($start % 10) : 900 + ($start % 100);
+            $end = $endNumber !== '' ? min((int) $endNumber, $autoEnd) : $autoEnd;
+            $padLen = $len;
+        } elseif ($this->betMode === 3) {
+            // Middle (=): middle digit → 9, first and last digits fixed (3-digit only)
+            $autoEnd = (int) floor($start / 100) * 100 + 90 + ($start % 10);
+            $end = $endNumber !== '' ? min((int) $endNumber, $autoEnd) : $autoEnd;
+            $step = 10;
+            $padLen = 3;
+        } else {
+            // Tail (>): last digit → 9, all preceding digits fixed
+            $autoEnd = (int) floor($start / 10) * 10 + 9;
+            $end = $endNumber !== '' ? min((int) $endNumber, $autoEnd) : $autoEnd;
+            $step = 1;
+            $padLen = $len;
         }
 
         $now = now();
@@ -375,5 +422,39 @@ class BetForm extends Component
         }
         Ticket::where('id', $this->draftTicketId)
             ->update(['total_amount' => Bet::where('ticket_id', $this->draftTicketId)->sum('amount')]);
+    }
+
+    /** @return array<array<string>> */
+    private function uniquePermutations(array $digits): array
+    {
+        $results = [];
+        $seen = [];
+        $this->permBacktrack($digits, [], $results, $seen);
+
+        return $results;
+    }
+
+    /** @param array<string> $remaining @param array<string> $current @param array<array<string>> $results @param array<string,bool> $seen */
+    private function permBacktrack(array $remaining, array $current, array &$results, array &$seen): void
+    {
+        if (empty($remaining)) {
+            $key = implode('', $current);
+            if (! isset($seen[$key])) {
+                $seen[$key] = true;
+                $results[] = $current;
+            }
+
+            return;
+        }
+        $usedAtLevel = [];
+        foreach ($remaining as $i => $digit) {
+            if (in_array($digit, $usedAtLevel, true)) {
+                continue;
+            }
+            $usedAtLevel[] = $digit;
+            $next = $remaining;
+            unset($next[$i]);
+            $this->permBacktrack(array_values($next), [...$current, $digit], $results, $seen);
+        }
     }
 }

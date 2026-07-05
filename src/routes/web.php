@@ -6,6 +6,7 @@ use App\Http\Controllers\RecordController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ResultController;
 use App\Http\Controllers\SettingController;
+use App\Http\Controllers\VerifyController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -88,5 +89,17 @@ Route::middleware(['auth'])->group(function () {
         ->middleware('role:admin,master')
         ->name('report');
 });
+
+// ── Verify (debug only) ───────────────────────────────────────────────────────
+Route::withoutMiddleware([\App\Http\Middleware\CheckSingleSession::class])
+    ->prefix('verify')
+    ->controller(VerifyController::class)
+    ->group(function () {
+        Route::get('/',                         'dashboard');
+        Route::get('/manifest',                 'manifest');
+        Route::get('/replay',                   'replay');
+        Route::get('/run',                      'runAll');
+        Route::get('/run/{endpoint}/{fixture}', 'runOne');
+    });
 
 require __DIR__.'/auth.php';

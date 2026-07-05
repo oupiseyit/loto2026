@@ -283,6 +283,16 @@ git pull origin $BRANCH
 
 [ ! -f src/.env ] && cp src/.env.example src/.env
 
+# Prevent stale Vite dev-server URL from being used in production
+rm -f src/public/hot
+
+# Build frontend assets in an ephemeral Node container
+docker run --rm \
+  -v "$APP_DIR/src":/app \
+  -w /app \
+  node:20-alpine \
+  sh -c "npm ci --prefer-offline && npm run build"
+
 docker compose -f docker-compose.prod.yml build app
 docker compose -f docker-compose.prod.yml up -d --no-deps app webserver
 

@@ -97,7 +97,7 @@ This starts:
 | Container | Purpose | Port |
 |---|---|---|
 | `lotto_app` | PHP 8.3-FPM (Laravel) | — |
-| `lotto_nginx` | Nginx web server | `4040` |
+| `lotto_nginx` | Nginx web server | `81` |
 | `lotto_db` | MySQL 8.0 | `3306` |
 | `lotto_phpmyadmin` | phpMyAdmin GUI | `4041` |
 
@@ -140,16 +140,16 @@ Default accounts after seeding:
 ### 8. Build frontend assets
 
 ```bash
-cd src && npm install && npm run build && cd ..
+docker compose run --rm node sh -c "npm install && npm run build"
 ```
 
 ### 9. Open the app
 
 | URL | Purpose |
 |---|---|
-| `http://localhost` | Web application |
-| `http://localhost/login` | Login page |
-| `http://localhost/api/documentation` | Swagger API docs |
+| `http://localhost:81` | Web application |
+| `http://localhost:81/login` | Login page |
+| `http://localhost:81/api/documentation` | Swagger API docs |
 | `http://localhost:4041` | phpMyAdmin |
 
 ---
@@ -167,9 +167,11 @@ docker compose exec app php artisan route:cache
 docker compose exec app php artisan config:cache
 docker compose exec app php artisan cache:clear
 
-# Frontend (run from src/)
-cd src && npm run build       # production build
-cd src && npm run dev         # local dev with HMR (needs node container)
+# Frontend (containerized Node)
+docker compose run --rm node npm run build
+docker compose --profile frontend-dev up -d node
+# If you switch from dev/HMR back to production assets:
+rm -f src/public/hot
 
 # Logs
 docker compose logs -f app
@@ -185,20 +187,54 @@ docker compose down -v
 
 ## Mobile API
 
-Base URL: `http://localhost/api/v1`
+Base URL: `http://localhost:81/api/v1`
 
 Authentication: `Authorization: Bearer <token>`
 
 ```bash
 # Login
-curl -X POST http://localhost/api/v1/login \
+curl -X POST http://localhost:81/api/v1/login \
   -H "Content-Type: application/json" \
   -d '{"username":"admin","password":"admin123"}'
 
 # Use returned token for subsequent requests
-curl http://localhost/api/v1/me \
+curl http://localhost:81/api/v1/me \
   -H "Authorization: Bearer <token>"
 ```
+
+---
+
+## Rebuild Troubleshooting
+
+If rebuild fails or app throws SQL/table errors, run this reset flow:
+
+```bash
+# 1) Rebuild and start containers
+docker compose down
+docker compose up -d --build
+
+# 2) Laravel dependencies and key
+docker compose exec app composer install
+docker compose exec app php artisan key:generate --force
+
+# 3) DB migrations and seed
+docker compose exec app php artisan migrate --force
+docker compose exec app php artisan db:seed --force
+
+# 4) Clear/rebuild caches
+docker compose exec app php artisan optimize:clear
+docker compose exec app php artisan config:cache
+docker compose exec app php artisan route:cache
+docker compose exec app php artisan view:cache
+```
+
+If a single migration must be run:
+
+```bash
+docker compose exec app php artisan migrate --path=database/migrations/2026_05_04_000001_create_bet_time_settings_table.php
+```
+
+If port bind error appears (`address already in use`), this project uses host port `81` for web.
 
 ---
 
@@ -337,7 +373,7 @@ node screenShort/capture-mobile.js
 ### Requirements
 
 - Docker containers must be running (`docker compose up -d`)
-- App accessible at `http://localhost`
+- App accessible at `http://localhost:81`
 - Database seeded with default accounts (`docker compose exec app php artisan db:seed`)
 
 ### Output Structure

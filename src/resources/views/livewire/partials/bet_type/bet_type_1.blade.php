@@ -11,5 +11,5 @@
            @input="number = number.replace(/[^0-9]/g, '').slice(0,3)"
            placeholder="{{ __('number') }}"
            class="w-full text-center font-bold rounded border-2 outline-none {{ $compact ? 'py-1 text-sm' : 'py-3 text-3xl' }}"
-           :style="active==='number' ? 'border-color:#DC143C;color:#DC143C;' : 'border-color:#D4A017;color:#DC143C;'" />
+           :style="active==='number' ? 'border-color:#9B2335;color:#9B2335;' : 'border-color:#C8BBA8;color:#9B2335;'" />
 </div>

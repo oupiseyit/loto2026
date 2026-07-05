@@ -47,7 +47,11 @@
       "Bash(chmod +x /Users/pisey/Desktop/Lotto2026/capture-web.js)",
       "Bash(npm init *)",
       "Bash(python3 -c \"import sys,json; [print\\(x.get\\('Name',''\\),x.get\\('Service',''\\),x.get\\('Status',''\\)\\) for x in [json.loads\\(l\\) for l in sys.stdin if l.strip\\(\\)]]\")",
-      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); m=d[0]['Mounts']; [print\\(x['Source'],'->', x['Destination']\\) for x in m]\")"
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); m=d[0]['Mounts']; [print\\(x['Source'],'->', x['Destination']\\) for x in m]\")",
+      "Bash(git -C /Users/pisey/Desktop/Lotto2026 check-ignore src/public/build)",
+      "Bash(git -C /Users/pisey/Desktop/Lotto2026 ls-files src/public/hot)",
+      "Bash(git -C /Users/pisey/Desktop/Lotto2026 rm --cached src/public/hot)",
+      "Bash(git -C /Users/pisey/Desktop/Lotto2026 status --short)"
     ],
     "additionalDirectories": [
       "/Users/pisey/Desktop/Lotto2026/.claude",

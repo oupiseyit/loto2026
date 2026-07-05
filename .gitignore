@@ -31,3 +31,4 @@ src/public/build/assets/
 .env.production
 .phpactor.json
 auth.json
+graphify-out/

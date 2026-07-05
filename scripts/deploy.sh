@@ -1,12 +1,19 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-APP_DIR="/var/www/lotto"
+DEFAULT_APP_DIR="/var/www/lotto"
+APP_DIR="${APP_DIR:-$DEFAULT_APP_DIR}"
 BRANCH="${1:-main}"
 
 if [[ ! -d "$APP_DIR" ]]; then
-  echo "Error: app directory not found: $APP_DIR" >&2
-  exit 1
+  if [[ -f "docker-compose.prod.yml" && -d "src" ]]; then
+    APP_DIR="$(pwd)"
+    echo "Warning: APP_DIR not found, using current directory: $APP_DIR" >&2
+  else
+    echo "Error: app directory not found: $APP_DIR" >&2
+    echo "Hint: run from project root or set APP_DIR, e.g. APP_DIR=/var/www/lotto ./deploy.sh $BRANCH" >&2
+    exit 1
+  fi
 fi
 
 cd "$APP_DIR"

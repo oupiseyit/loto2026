@@ -6,6 +6,15 @@
 
         
 
+        @if (session('error'))
+            <div class="mb-4 flex items-center gap-2 px-4 py-3 rounded-lg text-sm font-medium text-white" style="background-color:#DC143C;">
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+                </svg>
+                {{ session('error') }}
+            </div>
+        @endif
+
         @if ($status)
             <div class="mb-4 text-sm font-medium text-green-600 text-center">{{ $status }}</div>
         @endif

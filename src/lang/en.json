@@ -105,6 +105,8 @@
     "tail2_min_3_digits": "Tail 2 requires a 3-digit start number",
     "number_required": "Please enter a number",
     "amount_required": "Please enter an amount",
+    "amount_multiple_100": "Amount must be a multiple of 100",
+    "amount_min_100": "Minimum amount is 100",
     "invalid_end_number": "End number is out of range",
     "bet_added": "Bet added successfully",
     "delete_confirm_msg": "Are you sure you want to delete this record?",

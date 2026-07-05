@@ -105,6 +105,8 @@
     "tail2_min_3_digits": "Tail 2 yêu cầu số bắt đầu 3 chữ số",
     "number_required": "Vui lòng nhập số",
     "amount_required": "Vui lòng nhập số tiền",
+    "amount_multiple_100": "Số tiền phải là bội số của 100",
+    "amount_min_100":"Số tiền tối thiểu là 100",
     "invalid_end_number": "Số kết thúc nằm ngoài phạm vi",
     "bet_added": "Thêm cược thành công",
     "delete_confirm_msg": "Bạn có chắc muốn xóa bản ghi này không?",

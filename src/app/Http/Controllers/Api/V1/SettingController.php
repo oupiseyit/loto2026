@@ -29,6 +29,11 @@ class SettingController extends Controller
             ),
         ]
     )]
+    public function index(): JsonResponse
+    {
+        return $this->show();
+    }
+
     public function show(): JsonResponse
     {
         $setting = Setting::firstOrCreate(

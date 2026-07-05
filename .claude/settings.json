@@ -33,7 +33,10 @@
       "Bash(sshpass -p '@Gmail.com12345' ssh -o StrictHostKeyChecking=no kaka@217.216.111.191)",
       "Bash(sshpass -p '@Gmail.com12345' ssh -o StrictHostKeyChecking=no -t kaka@217.216.111.191 'echo \"@Gmail.com12345\" | sudo -S sh -c \"cd /var/www/lotto && docker compose stop node && docker compose rm -f node && rm -f src/public/hot && echo HOT_DELETED && docker compose exec -T app php artisan view:clear && docker compose exec -T app php artisan view:cache && echo DONE\"')",
       "Bash(sshpass -p '@Gmail.com12345' ssh -o StrictHostKeyChecking=no -t kaka@217.216.111.191 'echo \"@Gmail.com12345\" | sudo -S sh -c \"curl -s http://localhost/login | grep -o \\\\\"src=[^>]*\\\\\" | head -6 && echo --- && ls /var/www/lotto/src/public/hot 2>/dev/null && echo HOT_EXISTS || echo HOT_GONE\"')",
-      "WebSearch"
+      "WebSearch",
+      "Bash(git -C /Users/pisey/Desktop/Lotto2026 add .gitignore scripts/deploy.sh docker/php/Dockerfile src/public/hot)",
+      "Bash(git -C /Users/pisey/Desktop/Lotto2026 commit -m ' *)",
+      "Bash(git -C /Users/pisey/Desktop/Lotto2026 add .gitignore scripts/deploy.sh docker/php/Dockerfile)"
     ],
     "additionalDirectories": [
       "/Users/pisey/Desktop/Lotto2026/src/app"
