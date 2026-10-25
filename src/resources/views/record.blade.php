@@ -4,16 +4,15 @@
     @php
         $TABS = [
             ['key'=>'all',     'label'=> __('all_records')],
-            ['key'=>'morning', 'label'=> __('morning')],
-            ['key'=>'noon',    'label'=> __('noon')],
-            ['key'=>'evening', 'label'=> __('evening')],
+            ...array_map(fn ($t) => ['key' => $t, 'label' => $t], \App\Models\BetTimeSetting::lotteryTypes()),
             ['key'=>'winning', 'label'=> __('winning')],
         ];
-        $SESSION_BADGE = [
-            'morning' => ['label'=> __('morning'), 'bg'=>'#FFF3CD', 'text'=>'#856404'],
-            'noon'    => ['label'=> __('noon'),    'bg'=>'#D1ECF1', 'text'=>'#0C5460'],
-            'evening' => ['label'=> __('evening'), 'bg'=>'#D6EAF8', 'text'=>'#154360'],
-        ];
+        $TYPE_COLOR = ['KH5D' => ['#FFF3CD', '#856404'], 'VN5D' => ['#D1ECF1', '#0C5460'], 'VIP5D' => ['#F8D7DA', '#721C24']];
+        $SESSION_BADGE = \App\Models\BetTimeSetting::all()->mapWithKeys(fn ($s) => [$s->session_key => [
+            'label' => \App\Models\BetTimeSetting::label($s->session_key),
+            'bg'    => ($TYPE_COLOR[$s->lottery_type] ?? ['#EEE', '#555'])[0],
+            'text'  => ($TYPE_COLOR[$s->lottery_type] ?? ['#EEE', '#555'])[1],
+        ]])->all();
         $statusMap = [
             'pending'   => ['bg'=>'#FFF3CD','text'=>'#856404','label'=> __('pending')],
             'completed' => ['bg'=>'#D4EDDA','text'=>'#155724','label'=> __('completed')],

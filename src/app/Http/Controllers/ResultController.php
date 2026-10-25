@@ -3,25 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ResultRequest;
+use App\Models\BetTimeSetting;
 use App\Models\Result;
-use App\Models\Ticket;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class ResultController extends Controller
 {
-    // Positions per session
-    private const POSITIONS = [
-        'morning' => ['A', 'B', 'C', 'D'],
-        'noon'    => ['A', 'B', 'C', 'D', 'F', 'I', 'N'],
-        'evening' => ['A', 'B', 'C', 'D'],
-    ];
-
     public function index(Request $request)
     {
-        $selectedDate    = $request->date    ?? today()->toDateString();
-        $selectedSession = $request->session ?? 'morning';
-        $canEdit         = auth()->user()->isAdmin();
+        $selectedDate = $request->date ?? today()->toDateString();
+        $selectedSession = $request->session ?? (BetTimeSetting::active()->first()->session_key ?? '');
+        $canEdit = auth()->user()->isAdmin();
 
         // Available dates (from tickets or results, last 60 days)
         $dates = DB::table('results')
@@ -43,21 +36,21 @@ class ResultController extends Controller
             ->keyBy('position');
 
         // Build the full position grid (fill blanks with null)
-        $positions = self::POSITIONS[$selectedSession] ?? self::POSITIONS['morning'];
+        $positions = BetTimeSetting::active()->firstWhere('session_key', $selectedSession)?->letters() ?? [];
         $grid = collect($positions)->map(fn ($pos) => [
             'position' => $pos,
-            'number'   => $results->get($pos)?->number,
-            'id'       => $results->get($pos)?->id,
+            'number' => $results->get($pos)?->number,
+            'id' => $results->get($pos)?->id,
         ]);
 
         $view = $canEdit ? 'admin.result' : 'result';
 
         return view($view, [
-            'dates'   => $dates,
-            'grid'    => $grid,
+            'dates' => $dates,
+            'grid' => $grid,
             'canEdit' => $canEdit,
             'filters' => [
-                'date'    => $selectedDate,
+                'date' => $selectedDate,
                 'session' => $selectedSession,
             ],
         ]);
@@ -69,7 +62,7 @@ class ResultController extends Controller
      */
     public function store(ResultRequest $request)
     {
-        $date    = $request->result_date;
+        $date = $request->result_date;
         $session = $request->session;
 
         DB::transaction(function () use ($request, $date, $session) {
@@ -77,11 +70,11 @@ class ResultController extends Controller
                 Result::updateOrCreate(
                     [
                         'result_date' => $date,
-                        'session'     => $session,
-                        'position'    => $row['position'],
+                        'session' => $session,
+                        'position' => $row['position'],
                     ],
                     [
-                        'number'     => $row['number'],
+                        'number' => $row['number'],
                         'entered_by' => auth()->id(),
                     ]
                 );
@@ -98,7 +91,7 @@ class ResultController extends Controller
     public function update(ResultRequest $request, Result $result)
     {
         $result->update([
-            'number'     => $request->results[0]['number'] ?? $request->number,
+            'number' => $request->results[0]['number'] ?? $request->number,
             'entered_by' => auth()->id(),
         ]);
 

@@ -106,11 +106,19 @@
     "number_required": "กรุณากรอกตัวเลข",
     "amount_required": "กรุณากรอกจำนวนเงิน",
     "amount_multiple_100": "จำนวนเงินต้องเป็นทวีคูณของ 100",
-    "amount_min_100":"จำนวนเงินขั้นต่ำคือ 100",
+    "amount_min_100": "จำนวนเงินขั้นต่ำคือ 100",
     "invalid_end_number": "ตัวเลขสิ้นสุดอยู่นอกช่วง",
     "bet_added": "เพิ่มการเดิมพันสำเร็จ",
     "delete_confirm_msg": "คุณแน่ใจว่าต้องการลบรายการนี้?",
     "cancel": "ยกเลิก",
     "delete": "ลบ",
-    "record_deleted": "ลบรายการสำเร็จ"
+    "record_deleted": "ลบรายการสำเร็จ",
+    "post": "โพสต์",
+    "price": "ราคา",
+    "money": "เงิน",
+    "to_number": "ถึงเลข",
+    "confirm": "ยืนยัน",
+    "select_post": "กรุณาเลือกโพสต์",
+    "lottery_type": "ประเภท",
+    "copyright": "สงวนลิขสิทธิ์"
 }

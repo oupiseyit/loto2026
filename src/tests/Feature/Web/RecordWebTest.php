@@ -73,13 +73,14 @@ class RecordWebTest extends BaseTestCase
         $response->assertSee($t2->invoice_number);
     }
 
-    public function test_session_tab_filter_shows_only_morning(): void
+    public function test_lottery_type_tab_shows_only_that_type(): void
     {
-        $morning = Ticket::factory()->morning()->forUser($this->staff->id)->onDate(today()->toDateString())->create();
-        $evening = Ticket::factory()->evening()->forUser($this->staff->id)->onDate(today()->toDateString())->create();
+        $this->seed([\Database\Seeders\BetCategorySeeder::class, \Database\Seeders\BetTimeSettingSeeder::class]);
+        $morning = Ticket::factory()->forUser($this->staff->id)->onDate(today()->toDateString())->create(['session' => 'kh5d_1035']);
+        $evening = Ticket::factory()->forUser($this->staff->id)->onDate(today()->toDateString())->create(['session' => 'vn5d_1830']);
 
         $response = $this->actingAsStaff()
-                         ->get(route('record', ['date' => today()->toDateString(), 'tab' => 'morning']))
+                         ->get(route('record', ['date' => today()->toDateString(), 'tab' => 'KH5D']))
                          ->assertOk();
 
         $response->assertSee($morning->invoice_number);

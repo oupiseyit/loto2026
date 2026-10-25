@@ -27,7 +27,7 @@
             <select name="session"
                     class="border-2 rounded-lg px-3 py-1.5 text-sm outline-none focus:border-[#D4A017] border-gray-200">
                 <option value="">{{ __('all') }}</option>
-                @foreach (['morning' => __('morning'), 'noon' => __('noon'), 'evening' => __('evening')] as $val => $lbl)
+                @foreach (\App\Models\BetTimeSetting::active()->mapWithKeys(fn ($s) => [$s->session_key => \App\Models\BetTimeSetting::label($s->session_key)]) as $val => $lbl)
                     <option value="{{ $val }}" {{ ($filters['session'] ?? '') === $val ? 'selected' : '' }}>{{ $lbl }}</option>
                 @endforeach
             </select>

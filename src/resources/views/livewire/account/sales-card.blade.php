@@ -8,16 +8,14 @@
             <p class="text-xs text-gray-400 uppercase tracking-wide">Total</p>
             <p class="text-2xl font-black" style="color:#D4A017;">{{ number_format($todaySales) }}</p>
         </div>
-        @foreach (['morning' => 'ព្រឹក', 'noon' => 'ថ្ងៃ', 'evening' => 'ល្ងាច'] as $session => $label)
-            @if (isset($breakdown[$session]))
-                <div>
-                    <p class="text-xs text-gray-400 uppercase tracking-wide">{{ $label }}</p>
-                    <p class="text-lg font-bold" style="color:#B8860B;">
-                        {{ number_format($breakdown[$session]['amount'] ?? 0) }}
-                        <span class="text-xs text-gray-400">({{ $breakdown[$session]['count'] ?? 0 }})</span>
-                    </p>
-                </div>
-            @endif
+        @foreach ($breakdown as $session => $row)
+            <div>
+                <p class="text-xs text-gray-400 uppercase tracking-wide">{{ \App\Models\BetTimeSetting::label($session) }}</p>
+                <p class="text-lg font-bold" style="color:#B8860B;">
+                    {{ number_format($row['amount'] ?? 0) }}
+                    <span class="text-xs text-gray-400">({{ $row['count'] ?? 0 }})</span>
+                </p>
+            </div>
         @endforeach
     </div>
 </div>

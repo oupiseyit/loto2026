@@ -41,6 +41,8 @@
 
     {{ $slot }}
 
+    <footer class="hidden md:block text-center text-[11px] py-1" style="color:#7A6E64;">HT ភ្នាក់ © {{ now()->year }} — {{ __('copyright') }}</footer>
+
     @livewireScripts
     @stack('scripts')
 

@@ -7,29 +7,22 @@ use Illuminate\Database\Seeder;
 
 class BetCategorySeeder extends Seeder
 {
+    /** Posts (ប៉ុស្តិ៍) used by KH5D / VN5D / VIP5D. Lo* posts close earlier (group1 cutoff). */
+    public const P_POSTS = ['4K', '4P', '5P', '6P', '7P', 'A', 'B', 'C', 'D', 'F', 'I', 'N', 'K', 'A1', 'A2', 'A3', 'A4'];
+
+    public const LO_POSTS = ['Lo', 'LoF', 'LoFIN'];
+
     public function run(): void
     {
-        $categories = [
-            // P type (type=1)
-            ['name' => 'P1',   'type' => BetCategory::TYPE_P,  'sort_order' => 1],
-            ['name' => 'P2',   'type' => BetCategory::TYPE_P,  'sort_order' => 2],
-            ['name' => 'P3',   'type' => BetCategory::TYPE_P,  'sort_order' => 3],
-            ['name' => 'P4',   'type' => BetCategory::TYPE_P,  'sort_order' => 4],
-            ['name' => 'P5',   'type' => BetCategory::TYPE_P,  'sort_order' => 5],
-            ['name' => 'P6',   'type' => BetCategory::TYPE_P,  'sort_order' => 6],
-            ['name' => 'P7',   'type' => BetCategory::TYPE_P,  'sort_order' => 7],
-            ['name' => 'P8',   'type' => BetCategory::TYPE_P,  'sort_order' => 8],
-            // LO type (type=2)
-            ['name' => 'Lo23', 'type' => BetCategory::TYPE_LO, 'sort_order' => 9],
-            ['name' => 'Lo25', 'type' => BetCategory::TYPE_LO, 'sort_order' => 10],
-            ['name' => 'Lo27', 'type' => BetCategory::TYPE_LO, 'sort_order' => 11],
-        ];
-
-        foreach ($categories as $data) {
-            BetCategory::firstOrCreate(
-                ['name' => $data['name'], 'type' => $data['type']],
-                ['status' => true, 'sort_order' => $data['sort_order']]
-            );
+        $sort = 1;
+        foreach ([BetCategory::TYPE_P => self::P_POSTS, BetCategory::TYPE_LO => self::LO_POSTS] as $type => $names) {
+            foreach ($names as $name) {
+                BetCategory::firstOrCreate(
+                    ['name' => $name, 'type' => $type],
+                    ['status' => true, 'sort_order' => $sort]
+                );
+                $sort++;
+            }
         }
     }
 }

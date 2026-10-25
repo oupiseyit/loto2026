@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BetTimeSetting;
 use App\Models\Result;
 use App\Models\Ticket;
 use Illuminate\Http\Request;
@@ -10,9 +11,9 @@ class RecordController extends Controller
 {
     public function index(Request $request)
     {
-        $user         = auth()->user();
+        $user = auth()->user();
         $selectedDate = $request->date ?? today()->toDateString();
-        $tab          = $request->tab  ?? 'all'; // all | morning | noon | evening | winning
+        $tab = $request->tab ?? 'all'; // all | <lottery type> | winning
 
         // --- Available dates (scoped by role) ---
         $datesQuery = Ticket::query();
@@ -31,7 +32,7 @@ class RecordController extends Controller
             ->get()
             ->groupBy('session')
             ->mapWithKeys(fn ($sessions) => [
-                $sessions->first()->session => $sessions->pluck('number', 'position')->toArray()
+                $sessions->first()->session => $sessions->pluck('number', 'position')->toArray(),
             ])
             ->toArray();
 
@@ -59,7 +60,7 @@ class RecordController extends Controller
         $tickets = $ticketsQuery->latest()->paginate(20)->withQueryString();
 
         // --- Calculate wins if results exist ---
-        if (!empty($resultsMap)) {
+        if (! empty($resultsMap)) {
             $tickets->getCollection()->each(function ($ticket) use ($resultsMap) {
                 $this->calculateTicketWins($ticket, $resultsMap);
             });
@@ -68,12 +69,12 @@ class RecordController extends Controller
         $view = auth()->user()->isAdmin() ? 'admin.record' : 'record';
 
         return view($view, [
-            'dates'   => $dates,
+            'dates' => $dates,
             'tickets' => $tickets,
-            'totals'  => $totals,
+            'totals' => $totals,
             'filters' => [
                 'date' => $selectedDate,
-                'tab'  => $tab,
+                'tab' => $tab,
             ],
         ]);
     }
@@ -89,19 +90,19 @@ class RecordController extends Controller
     {
         // If no results for this session, skip
         $sessionResults = $resultsMap[$ticket->session] ?? null;
-        if (!$sessionResults) {
+        if (! $sessionResults) {
             return;
         }
 
         $totalWin = 0;
-        $allBets  = $ticket->bets;
+        $allBets = $ticket->bets;
 
         foreach ($allBets as $bet) {
             // Check if bet number matches any result number in any position
             $isWinner = false;
             foreach ($sessionResults as $position => $resultNumber) {
                 // Match bet number with result number
-                if ((string)$bet->number === (string)$resultNumber) {
+                if ((string) $bet->number === (string) $resultNumber) {
                     $isWinner = true;
                     break;
                 }
@@ -135,12 +136,8 @@ class RecordController extends Controller
 
     private function applyTabFilter($query, string $tab): void
     {
-        if ($tab === 'morning') {
-            $query->where('session', 'morning');
-        } elseif ($tab === 'noon') {
-            $query->where('session', 'noon');
-        } elseif ($tab === 'evening') {
-            $query->where('session', 'evening');
+        if (in_array($tab, BetTimeSetting::lotteryTypes(), true)) {
+            $query->whereIn('session', BetTimeSetting::where('lottery_type', $tab)->pluck('session_key'));
         } elseif ($tab === 'winning') {
             $query->where('win_amount', '>', 0);
         }

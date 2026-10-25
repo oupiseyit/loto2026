@@ -1,5 +1,4 @@
 @php
-    $SESSIONS = [['key'=>'morning','label'=>__('morning')],['key'=>'noon','label'=>__('noon')],['key'=>'evening','label'=>__('evening')]];
     $canEdit  = $this->canEdit;
     $dates    = $this->dates;
 @endphp
@@ -65,15 +64,12 @@
         {{-- Session radio --}}
         <div class="px-3 md:px-4 py-2 border-b border-gray-200 flex items-center gap-4 flex-shrink-0 bg-white">
             <span class="text-xs md:text-sm font-semibold text-gray-600">{{ __('session') }}:</span>
-            @foreach ($SESSIONS as $s)
-                <label class="flex items-center gap-1.5 cursor-pointer text-sm font-medium">
-                    <input type="radio" name="session" value="{{ $s['key'] }}"
-                           wire:click="selectSession('{{ $s['key'] }}')"
-                           {{ $selectedSession === $s['key'] ? 'checked' : '' }}
-                           class="accent-[#DC143C]">
-                    <span style="color:{{ $selectedSession === $s['key'] ? '#DC143C' : '#374151' }};">{{ $s['label'] }}</span>
-                </label>
-            @endforeach
+            <select wire:model.live="selectedSession"
+                    class="text-sm font-bold rounded border-2 px-2 py-1 outline-none" style="border-color:#DC143C;color:#DC143C;">
+                @foreach ($this->availableSessions as $s)
+                    <option value="{{ $s->session_key }}">{{ $s->lottery_type }} · {{ \Carbon\Carbon::parse($s->result_time)->format('g:iA') }} · {{ $s->session_name }}</option>
+                @endforeach
+            </select>
         </div>
 
         {{-- Result table --}}

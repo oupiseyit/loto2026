@@ -4,7 +4,7 @@
     <x-slot:breadcrumb>Reports</x-slot:breadcrumb>
 
     @php
-        $SESSION_LABEL = ['morning' => 'ព្រឹក', 'noon' => 'ថ្ងៃ', 'evening' => 'ល្ងាច'];
+        $SESSION_LABEL = \App\Models\BetTimeSetting::all()->mapWithKeys(fn ($s) => [$s->session_key => \App\Models\BetTimeSetting::label($s->session_key)])->all();
         $user          = auth()->user();
         $rowItems      = $rows instanceof \Illuminate\Pagination\LengthAwarePaginator
                             ? $rows->items()

@@ -1,7 +1,7 @@
 {{-- Header --}}
 <div class="px-3 md:px-4 py-2 md:py-3 border-b border-gray-200 flex items-center justify-between flex-shrink-0" style="background-color:#FFF8DC;">
     <div>
-        <h1 class="text-sm md:text-base font-bold" style="color:#DC143C;">{{ __('records') }}</h1>
+        <h1 class="text-sm md:text-base font-bold" style="color:#DC143C;">{{ __('record') }}</h1>
         <p class="text-xs text-gray-500 mt-0.5">
             {{ $selectedDate ? \Carbon\Carbon::parse($selectedDate)->format('d M Y') : __('select_date') }}
         </p>

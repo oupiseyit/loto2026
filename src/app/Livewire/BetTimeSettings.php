@@ -22,6 +22,8 @@ class BetTimeSettings extends Component
 
     public string $session_key = '';
 
+    public string $lottery_type = '';
+
     public string $session_name = '';
 
     public string $result_time = '';
@@ -45,7 +47,7 @@ class BetTimeSettings extends Component
 
     public function openCreate(): void
     {
-        $this->reset(['session_key', 'session_name', 'result_time', 'group_type',
+        $this->reset(['session_key', 'lottery_type', 'session_name', 'result_time', 'group_type',
             'group1_types', 'group1_cutoff', 'group2_types', 'group2_cutoff']);
         $this->is_active = true;
         $this->isEditing = false;
@@ -58,6 +60,7 @@ class BetTimeSettings extends Component
         $s = BetTimeSetting::findOrFail($id);
 
         $this->session_key = $s->session_key;
+        $this->lottery_type = $s->lottery_type ?? '';
         $this->session_name = $s->session_name;
         $this->result_time = substr($s->result_time, 0, 5);
         $this->group_type = $s->group_type ?? [];
@@ -76,6 +79,7 @@ class BetTimeSettings extends Component
         abort_unless(auth()->user()->isAdmin(), 403);
 
         $rules = [
+            'lottery_type' => ['required', 'string', 'max:20'],
             'session_name' => ['required', 'string', 'max:100'],
             'result_time' => ['required', 'date_format:H:i'],
             'group1_types' => ['required', 'array', 'min:1'],
@@ -91,6 +95,7 @@ class BetTimeSettings extends Component
         $this->validate($rules);
 
         $data = [
+            'lottery_type' => $this->lottery_type,
             'session_name' => $this->session_name,
             'result_time' => $this->result_time.':00',
             'group_type' => $this->group_type,

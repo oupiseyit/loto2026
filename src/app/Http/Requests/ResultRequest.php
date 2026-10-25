@@ -17,10 +17,10 @@ class ResultRequest extends FormRequest
     {
         return [
             'result_date' => ['required', 'date'],
-            'session'     => ['required', 'in:morning,noon,evening'],
-            'results'     => ['required', 'array', 'min:1'],
+            'session' => ['required', 'string', 'exists:bet_time_settings,session_key'],
+            'results' => ['required', 'array', 'min:1'],
             'results.*.position' => ['required', 'string', 'max:5'],
-            'results.*.number'   => ['required', 'string', 'max:10'],
+            'results.*.number' => ['required', 'string', 'max:10'],
         ];
     }
 

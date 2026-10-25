@@ -7,6 +7,12 @@ use Tests\Feature\BaseTestCase;
 
 class ResultWebTest extends BaseTestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->seed([\Database\Seeders\BetCategorySeeder::class, \Database\Seeders\BetTimeSettingSeeder::class]);
+    }
+
     public function test_result_page_renders_for_all_roles(): void
     {
            $this->actingAsAdmin()
@@ -35,9 +41,9 @@ class ResultWebTest extends BaseTestCase
         $this->actingAsAdmin()
              ->get(route('result'))
              ->assertOk()
-             ->assertSee('morning')
-             ->assertSee('noon')
-             ->assertSee('evening');
+             ->assertSee('KH5D')
+             ->assertSee('VN5D')
+             ->assertSee('VIP5D');
     }
 
     public function test_admin_can_save_results(): void
@@ -45,7 +51,7 @@ class ResultWebTest extends BaseTestCase
         $this->actingAsAdmin()
              ->post(route('result.store'), [
                  'result_date' => today()->toDateString(),
-                 'session'     => 'morning',
+                 'session'     => 'kh5d_1035',
                  'results'     => [
                      ['position' => 'A', 'number' => '25'],
                      ['position' => 'B', 'number' => '07'],
@@ -53,7 +59,7 @@ class ResultWebTest extends BaseTestCase
              ])->assertRedirect();
 
         $this->assertTrue(
-            \App\Models\Result::where('session', 'morning')
+            \App\Models\Result::where('session', 'kh5d_1035')
                 ->where('position', 'A')
                 ->where('number', '25')
                 ->whereDate('result_date', today())
@@ -66,7 +72,7 @@ class ResultWebTest extends BaseTestCase
         $this->actingAsMaster()
              ->post(route('result.store'), [
                  'result_date' => today()->toDateString(),
-                 'session'     => 'morning',
+                 'session'     => 'kh5d_1035',
                  'results'     => [['position' => 'A', 'number' => '25']],
              ])->assertForbidden();
     }
@@ -76,7 +82,7 @@ class ResultWebTest extends BaseTestCase
         $this->actingAsStaff()
              ->post(route('result.store'), [
                  'result_date' => today()->toDateString(),
-                 'session'     => 'morning',
+                 'session'     => 'kh5d_1035',
                  'results'     => [['position' => 'A', 'number' => '25']],
              ])->assertForbidden();
     }
@@ -85,7 +91,7 @@ class ResultWebTest extends BaseTestCase
     {
         $result = Result::factory()->create([
             'result_date' => today()->toDateString(),
-            'session'     => 'morning',
+            'session'     => 'kh5d_1035',
             'position'    => 'A',
             'number'      => '42',
         ]);
@@ -93,7 +99,7 @@ class ResultWebTest extends BaseTestCase
         $this->actingAsAdmin()
              ->get(route('result', [
                  'date'    => today()->toDateString(),
-                 'session' => 'morning',
+                 'session' => 'kh5d_1035',
              ]))
              ->assertOk()
              ->assertSee('42');
@@ -103,7 +109,7 @@ class ResultWebTest extends BaseTestCase
     {
         $result = Result::factory()->create([
             'result_date' => today()->toDateString(),
-            'session'     => 'morning',
+            'session'     => 'kh5d_1035',
             'position'    => 'A',
             'number'      => '10',
         ]);
@@ -111,7 +117,7 @@ class ResultWebTest extends BaseTestCase
         $this->actingAsAdmin()
              ->put(route('result.update', $result), [
                  'result_date' => today()->toDateString(),
-                 'session'     => 'morning',
+                 'session'     => 'kh5d_1035',
                  'results'     => [['position' => 'A', 'number' => '99']],
              ])->assertRedirect();
 

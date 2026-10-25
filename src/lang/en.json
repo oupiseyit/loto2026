@@ -112,5 +112,13 @@
     "delete_confirm_msg": "Are you sure you want to delete this record?",
     "cancel": "Cancel",
     "delete": "Delete",
-    "record_deleted": "Record deleted successfully"
+    "record_deleted": "Record deleted successfully",
+    "post": "Post",
+    "price": "Price",
+    "money": "Money",
+    "to_number": "To number",
+    "confirm": "Confirm",
+    "select_post": "Please select a post",
+    "lottery_type": "Type",
+    "copyright": "All rights reserved"
 }

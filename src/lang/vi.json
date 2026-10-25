@@ -106,11 +106,19 @@
     "number_required": "Vui lòng nhập số",
     "amount_required": "Vui lòng nhập số tiền",
     "amount_multiple_100": "Số tiền phải là bội số của 100",
-    "amount_min_100":"Số tiền tối thiểu là 100",
+    "amount_min_100": "Số tiền tối thiểu là 100",
     "invalid_end_number": "Số kết thúc nằm ngoài phạm vi",
     "bet_added": "Thêm cược thành công",
     "delete_confirm_msg": "Bạn có chắc muốn xóa bản ghi này không?",
     "cancel": "Hủy",
     "delete": "Xóa",
-    "record_deleted": "Xóa bản ghi thành công"
+    "record_deleted": "Xóa bản ghi thành công",
+    "post": "Đài",
+    "price": "Giá",
+    "money": "Tiền",
+    "to_number": "Đến số",
+    "confirm": "Xác nhận",
+    "select_post": "Vui lòng chọn đài",
+    "lottery_type": "Loại",
+    "copyright": "Bảo lưu mọi quyền"
 }
